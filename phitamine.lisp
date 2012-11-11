@@ -1,4 +1,4 @@
-;;;;; Phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
 
 (defun phitamine ()
   (| (cons? *home-components*)

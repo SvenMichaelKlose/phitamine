@@ -29,13 +29,12 @@
 (defun components-path (x)
   (apply #'+ (pad (symbol-components x) "/")))
 
-(defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil))
-(let params nil
+(defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
   (alet components
-    (& (t? !)      (= components *components*))
+    (& (t? !) (= components *components*))
     (when !
-      (& (symbol? !) (list! components))
-      (& (symbol? !) (list! components))))
+      (& (symbol? !) (= components (list components)))
+      (& (symbol? !) (= components (list components)))))
   (!? remove      (= remove (force-list !)))
   (!? update      (= update (force-list !)))
   (!? add         (= add    (force-list !)))
@@ -45,7 +44,7 @@
     (assoc-adjoin .i i. components))
   (append! components add)
   (& (t? params)          (= params (request-data)))
-  (+ *action-base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params)))))))
+  (+ *action-base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
 
 (defun requested-actions ()
   (queue-list *requested-actions*))
@@ -79,7 +78,7 @@
 
 (defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
   (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
-             (action-url components :remove remove :update update :add add))) ; :params params)))
+             (action-url components :remove remove :update update :add add)))
   (quit))
 
 (defun request-action ()
