@@ -30,16 +30,17 @@
 
 (defun form-files (name)
   (& (has-form-files?)
-     (with-queue q
-       (dotimes (i (length (%%%href (%%%href *_FILES* name) "name"))
-                 (queue-list q))
-         (awhen (%%%href (%%%href (%%%href *_FILES* name) "tmp_name") i)
-           (| (empty-string? !)
-              (enqueue q (list (cons 'name (%%%href (%%%href (%%%href *_FILES* name) "name") i))
-                               (cons 'tmp-name (%%%href (%%%href (%%%href *_FILES* name) "tmp_name") i))
-                               (cons 'error (%%%href (%%%href (%%%href *_FILES* name) "error") i))
-                               (cons 'size (%%%href (%%%href (%%%href *_FILES* name) "size") i))
-                               (cons 'type (%%%href (%%%href (%%%href *_FILES* name) "type") i))))))))))
+     (let n (symbol-component name)
+       (with-queue q
+         (dotimes (i (length (%%%href (%%%href *_FILES* n) "name"))
+                   (queue-list q))
+           (awhen (%%%href (%%%href (%%%href *_FILES* n) "tmp_name") i)
+             (| (empty-string? !)
+                (enqueue q (list (cons 'name (%%%href (%%%href (%%%href *_FILES* n) "name") i))
+                                 (cons 'tmp-name (%%%href (%%%href (%%%href *_FILES* n) "tmp_name") i))
+                                 (cons 'error (%%%href (%%%href (%%%href *_FILES* n) "error") i))
+                                 (cons 'size (%%%href (%%%href (%%%href *_FILES* n) "size") i))
+                                 (cons 'type (%%%href (%%%href (%%%href *_FILES* n) "type") i)))))))))))
 
 (defun form-alists ()
   (with (f (form-data)
