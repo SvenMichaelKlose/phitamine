@@ -39,7 +39,7 @@
   (!? update      (= update (force-list !)))
   (!? add         (= add    (force-list !)))
   (awhen remove
-    (= components (aremove-if [member _ remove] components)))
+    (= components (remove-if [member _ remove] components)))
   (dolist (i update)
     (assoc-adjoin .i i. components))
   (append! components add)
