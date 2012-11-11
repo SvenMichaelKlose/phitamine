@@ -3,6 +3,3 @@
 (defun empty? (x)
   (| (not x)
      (== 0 (length x))))
-
-(defun keywordassoc (x)
-  (filter [cons (make-keyword (string-upcase _.)) ._] x))

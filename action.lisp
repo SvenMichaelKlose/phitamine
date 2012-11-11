@@ -1,74 +1,83 @@
 ;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
 
+(defvar *home-components* nil)
+(defvar *components* nil)
 (defvar *actions* nil)
 (defvar *action* nil)
-(defvar *components* nil)
-(defvar *home-action* nil)
-(defvar *default-action* nil)
 
-(defun add-parent-action (component &key (handler nil) (parent nil))
-  (when parent
-    `(!? (assoc parent *actions* :test #'eq)
-         (= (cddr !) parent)
-         (error "Cannot set undefined parent ~A for handler ~A." parent handler))))
+(defun add-action (component &key (group 'default) (handler nil))
+  (& (assoc component *actions*)
+     (error "action ~A is already defined" component))
+  (acons! component (cons handler group) *actions*))
 
-(defun add-action (component &key (handler nil) (parent nil))
-  (add-parent-action component :handler handler :parent parent)
-  (acons! component (cons handler nil) *actions*))
+(defmacro define-action (component &key (group 'default) (handler nil))
+  (print-definition `(define-action ,component :handler ,handler :group ,group))
+  (| (symbol? group) (error "group is not a symbol"))
+  `(add-action ',component :group ',group :handler ,(| handler `#',component)))
 
-(defmacro define-action (component &key (handler nil) (parent nil))
-  (print-definition `(define-action ,component :handler ,handler :parent ,parent))
-  (| handler           (= handler `#',component))
-  (| (symbol? parent)  (error "PARENT is not a symbol"))
-  `(add-action ',component :handler ,handler :parent ',parent))
+(defun symbol-component (x)
+  (? (symbol? x)
+     (string-downcase (symbol-name x))
+     (string x)))
+
+(defun symbol-components (x)
+  (filter #'symbol-component (tree-list x)))
 
 (defun components-path (x)
-  (apply #'string-concat (pad (filter [? (symbol? _)
-                                         (string-downcase (symbol-name _))
-                                         _]
-                                      x)
-                              "/")))
+  (apply #'+ (pad (symbol-components x) "/")))
 
-(defun action-url (components &key (params nil))
-  (& (t? components)       (= components *components*))
-  (& (symbol? components)  (= components (list components)))
-  (& (atom components.)    (= components (list components)))
-  (& (t? params)           (= params (request-data)))
-  (+ *action-base-url* "/" (components-path (apply #'append components)) (url-assignments-tail params)))
+(defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil))
+(let params nil
+  (alet components
+    (& (t? !)      (= components *components*))
+    (& (symbol? !) (list! components))
+    (& (symbol? !) (list! components)))
+  (!? remove      (= remove (force-list !)))
+  (!? update      (= update (force-list !)))
+  (!? add         (= add    (force-list !)))
+  (awhen remove
+    (= components (aremove-if [member _ remove] components)))
+  (dolist (i update)
+    (assoc-adjoin .i i. components))
+  (append! components add)
+  (& (t? params)          (= params (request-data)))
+  (+ *action-base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params)))))))
 
-(defun action-redirect (components &key (params nil))
-  (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
-             (action-url components :params params)))
-  (quit))
+(defun requested-actions ()
+  (queue-list *requested-actions*))
 
-(defun parse-components (x handlers)
+(defun component-action (x)
+  (assoc x *actions*))
+
+(defun call-url-action (action x)
+  (with-temporary *action* action
+    (let next-action (| (funcall .action. x)
+                        (values x. .x))
+      (?
+        (t? next-action)
+          .x
+        (values? next-action)
+          (with ((kept next) next-action)
+            (!? kept (+! *components* (list (force-list kept))))
+            next)
+        next-action))))
+
+(defun call-url-actions-0 (x)
   (& x
-     (!? (assoc (? (symbol? x.)
-                   x.
-                   (make-symbol (string-upcase x.)))
-                handlers :test #'eq)
-         (parse-components (funcall .!. !. .x) (| ..! handlers))
-         (tpl-error-404))))
+     (let c (make-upcase-symbol x.)
+       (!? (component-action c)
+           (call-url-actions-0 (call-url-action ! (cons c .x)))
+           (tpl-error-404)))))
 
-(defun keep-components (n &rest x)
-  (append! *components* (list (cons n x))))
+(defun call-url-actions ()
+  (= *components* nil)
+  (call-url-actions-0 (| (request-path-components) *home-components*)))
 
-(defun call-actions ()
-  (parse-components (| (request-path-components) *home-action*) *actions*)
-  (funcall (| *action* *default-action*)))
-
-(defun required-component (x)
-  (| x
-     (progn
-       (princ "URL hacking? Tsstsstss!")
-       (quit))))
-
-(defmacro set-action (&rest body)
-  `(= *action* #'(() ,@body)))
-
-(defun request-action-redirect (action &key (components t))
-  (action-redirect components :params (list (cons :action action))))
+(defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
+  (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
+             (action-url components :remove remove :update update :add add))) ; :params params)))
+  (quit))
 
 (defun request-action ()
   (& (has-request?)
-     (assoc-value :action (request-data))))
+     (assoc-value 'action (request-data))))

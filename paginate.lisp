@@ -3,7 +3,8 @@
 (defstruct pagination
   (size 10)
   (page nil)
-  (total nil))
+  (total nil)
+  (tpl-range? t))
 
 (def-pagination pagination-offset (pagination)
   (* size (1- page)))
@@ -16,6 +17,15 @@
        (1+ n)
        n)))
 
+(def-pagination pagination-from (pagination)
+  (1+ (pagination-offset pagination)))
+
+(def-pagination pagination-to (pagination)
+  (alet (+ size (pagination-offset pagination))
+    (? (< total !)
+       total
+       !)))
+
 (def-pagination pagination-first-page? (pagination)
   (== 1 page))
 
@@ -23,7 +33,7 @@
   (== (pagination-pages pagination) page))
 
 (defun page-url (component-maker page)
-  (action-url (funcall component-maker page) :params t))
+  (action-url (funcall component-maker page))) ; :params t))
 
 (defun page-span (cls component-maker page &key (edge? nil) (txt nil))
   `(,@(? edge? '(span) '(a))

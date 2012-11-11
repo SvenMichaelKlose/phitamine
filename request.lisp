@@ -8,7 +8,7 @@
 (defun request-data ()
   (| *request-data*
      (& (has-request?)
-        (= *request-data* (aremove :phpsessid (keywordassoc (hash-assoc *_REQUEST*)))))))
+        (= *request-data* (aremove 'phpsessid (hash-assoc *_REQUEST*))))))
 
 (defun request (name)
   (assoc-value name (request-data)))

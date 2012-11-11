@@ -22,4 +22,4 @@
         (error "template ~A called recursively" ',name))
      (with-temporaries (*template-parameters* (append params *template-parameters*)
                         *currently-processed-templates* (cons ',name *currently-processed-templates*))
-         (apply #'string-concat (filter #'lml2xml ,(list 'backquote (dot-expand (read-file-all path))))))))
+       (apply #'+ (filter #'lml2xml ,(list 'backquote (dot-expand (read-file-all path))))))))
