@@ -15,6 +15,9 @@
   (| (symbol? group) (error "group is not a symbol"))
   `(add-action ',component :group ',group :handler ,(| handler `#',component)))
 
+(defun set-action-group (action-name group)
+  (= (cddr (assoc action-name *actions*)) group))
+
 (defun symbol-component (x)
   (? (symbol? x)
      (string-downcase (symbol-name x))
