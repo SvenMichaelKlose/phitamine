@@ -33,8 +33,9 @@
 (let params nil
   (alet components
     (& (t? !)      (= components *components*))
-    (& (symbol? !) (list! components))
-    (& (symbol? !) (list! components)))
+    (when !
+      (& (symbol? !) (list! components))
+      (& (symbol? !) (list! components))))
   (!? remove      (= remove (force-list !)))
   (!? update      (= update (force-list !)))
   (!? add         (= add    (force-list !)))
