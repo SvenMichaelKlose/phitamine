@@ -25,4 +25,7 @@
 (defun component-port (x)
   (group-port (cddr (component-action x))))
 
+(defun components-w/o-port (port)
+  (remove-if [eq port (component-port _.)] *components*))
+
 (= (group-port 'default) 'content)
