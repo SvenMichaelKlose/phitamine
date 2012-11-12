@@ -13,7 +13,6 @@
  "phitamine/terpri.lisp"
  "phitamine/utils.lisp"
  "phitamine/request.lisp"
- "phitamine/request-path.lisp"
  "phitamine/detect-language.lisp"
  "phitamine/session.lisp"
  "phitamine/header.lisp"
