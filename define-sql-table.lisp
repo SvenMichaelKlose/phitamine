@@ -7,7 +7,9 @@
        (defun ,($ 'find- name) (&optional (fields nil) &key (limit nil) (offset nil) (order-by nil) (direction nil))
          (let column-names (make-upcase-symbols (*db*.column-names ,table-name))
            (mapcar [mapcar #'cons column-names _]
-                   (*db*.exec (sql-clause-select :table ,table-name :where fields :limit limit :offset offset :order-by order-by :direction direction)))))
+                   (*db*.exec (sql-clause-select :table ,table-name
+                                                 :where (force-alist fields)
+                                                 :limit limit :offset offset :order-by order-by :direction direction)))))
        (defun ,($ 'find- singular-name) (&optional (fields nil))
          (car (funcall #',($ 'find- name) fields)))
        (defun ,($ 'insert- singular-name) (fields)
@@ -20,6 +22,9 @@
          (let column-names (make-upcase-symbols (*db*.column-names ,table-name))
            (number (caar (*db*.exec (sql-clause-select :table ,table-name :fields '("COUNT(1)") :where fields))))))
        (defun ,($ 'get-distinct- name) (field &key (where nil) (order-by nil) (direction nil))
-         (carlist (*db*.exec (sql-clause-select :table ,table-name :fields `(,,(+ "DISTINCT(" (symbol-name field) ")")) :where where :order-by order-by :direction direction))))
+         (carlist (*db*.exec (sql-clause-select :table ,table-name :fields `(,,(+ "DISTINCT(" (symbol-name field) ")"))
+                                                :where where))))
        (defun ,($ 'select- name) (&key (fields nil) (where nil) (limit nil) (offset nil) (order-by nil) (direction nil))
-         (*db*.exec (sql-clause-select :table ,table-name :fields ,fields :where ,where :limit ,limit :offset offset :order-by order-by :direction direction))))))
+         (*db*.exec (sql-clause-select :table ,table-name :fields ,fields
+                                       :where ,where
+                                       :limit ,limit :offset offset :order-by order-by :direction direction))))))

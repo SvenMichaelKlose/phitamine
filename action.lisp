@@ -34,13 +34,13 @@
      (error "list or alist expected for :UPDATE"))
   (= components (? (t? components)
                    (copy-tree *components*)
-                   (force-assoc components)))
+                   (force-alist components)))
   (when remove
     (= remove (force-list remove))
     (= components (remove-if [member _ remove] components)))
-  (dolist (i (force-assoc update))
+  (dolist (i (force-alist update))
     (assoc-adjoin .i i. components :test #'eq))
-  (append! components (force-assoc add))
+  (append! components (force-alist add))
   (& (t? params) (= params (request-data)))
   (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
 
