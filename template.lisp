@@ -23,3 +23,9 @@
      (with-temporaries (*template-parameters* (append params *template-parameters*)
                         *currently-processed-templates* (cons ',name *currently-processed-templates*))
        (apply #'+ (filter #'lml2xml ,(list 'backquote (dot-expand (read-file-all path))))))))
+
+(defun template-list (template records)
+  (let index 0
+    (filter [with-temporary *template-parameters* (cons (cons 'index index) *template-parameters*)
+              (funcall template _)]
+            records)))
