@@ -39,7 +39,7 @@
     (= remove (force-list remove))
     (= components (remove-if [member _ remove] components)))
   (dolist (i (force-alist update))
-    (assoc-adjoin .i i. components :test #'eq))
+    (assoc-adjoin .i i. components :test #'eq :to-end? t))
   (append! components (force-alist add))
   (& (t? params) (= params (request-data)))
   (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
