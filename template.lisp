@@ -26,6 +26,6 @@
 
 (defun template-list (template records)
   (let index 0
-    (filter [with-temporary *template-parameters* (cons (cons 'index index) *template-parameters*)
+    (filter [with-temporary *template-parameters* (cons (cons 'index (1+! index)) *template-parameters*)
               (funcall template _)]
             records)))
