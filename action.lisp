@@ -30,8 +30,6 @@
   (apply #'+ (pad (symbol-components x) "/")))
 
 (defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
-  (| (not update) (cons? update)
-     (error "list or alist expected for :UPDATE"))
   (= components (? (t? components)
                    (copy-tree *components*)
                    (force-alist components)))
