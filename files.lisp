@@ -2,6 +2,7 @@
 ("phitamine/caroshi/base/lang.lisp"
  "phitamine/caroshi/base/url/path-pathlist.lisp"
  "phitamine/caroshi/base/url/url-assignments.lisp"
+ "phitamine/caroshi/base/php/request-path.lisp"
  "phitamine/caroshi/server/php/standalone/log.lisp"
  "phitamine/caroshi/sql/utils-querystring.lisp"
  "phitamine/caroshi/server/sql/create-table.lisp"
