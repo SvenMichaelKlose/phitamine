@@ -33,7 +33,7 @@
   (== (pagination-pages pagination) page))
 
 (defun page-url (component-maker page)
-  (action-url (funcall component-maker page :params t)))
+  (funcall component-maker page))
 
 (defun page-span (cls component-maker page &key (edge? nil) (txt nil))
   `(,@(? edge? '(span) '(a))

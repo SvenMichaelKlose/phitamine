@@ -30,21 +30,20 @@
   (apply #'+ (pad (symbol-components x) "/")))
 
 (defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
-  (alet components
-    (& (t? !) (= components *components*))
-    (when !
-      (& (symbol? !) (= components (list components)))
-      (& (symbol? !) (= components (list components)))))
+  (when components
+    (& (t? components)      (= components (copy-tree *components*)))
+    (& (symbol? components) (= components (list components)))
+    (& (symbol? components) (= components (list components))))
   (!? remove      (= remove (force-list !)))
   (!? update      (= update (force-list !)))
   (!? add         (= add    (force-list !)))
   (awhen remove
-    (= components (remove-if [member _ remove] components)))
+    (= components (remove-if [member _ !] components)))
   (dolist (i update)
-    (assoc-adjoin .i i. components))
+    (assoc-adjoin .i i. components :test #'eq))
   (append! components add)
-  (& (t? params)          (= params (request-data)))
-  (+ *action-base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
+  (& (t? params) (= params (request-data)))
+  (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
 
 (defun requested-actions ()
   (queue-list *requested-actions*))
@@ -61,7 +60,8 @@
           .x
         (values? next-action)
           (with ((kept next) next-action)
-            (!? kept (+! *components* (list (force-list kept))))
+            (!? kept
+                (+! *components* (list (force-list kept))))
             next)
         next-action))))
 
