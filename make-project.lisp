@@ -4,7 +4,6 @@
   (make-project name
                 :target 'php
                 :obfuscate? nil
-                :files (cons "phitamine/config.lisp"
-                             (+ (read-file "phitamine/files.lisp") files))
+                :files (+ (read-file "phitamine/files.lisp") files)
                 :emitter [with-open-file out (open "compiled/index.php" :direction 'output)
                            (princ _ out)]))

@@ -12,6 +12,7 @@
  "phitamine/caroshi/server/sql/update.lisp"
  "phitamine/terpri.lisp"
  "phitamine/utils.lisp"
+ "phitamine/php.lisp"
  "phitamine/request.lisp"
  "phitamine/detect-language.lisp"
  "phitamine/session.lisp"
