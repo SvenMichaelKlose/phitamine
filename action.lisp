@@ -30,18 +30,17 @@
   (apply #'+ (pad (symbol-components x) "/")))
 
 (defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
-  (when components
-    (& (t? components)      (= components (copy-tree *components*)))
-    (& (symbol? components) (= components (list components)))
-    (& (symbol? components) (= components (list components))))
-  (!? remove      (= remove (force-list !)))
-  (!? update      (= update (force-list !)))
-  (!? add         (= add    (force-list !)))
-  (awhen remove
-    (= components (remove-if [member _ !] components)))
-  (dolist (i update)
+  (| (not update) (cons? update)
+     (error "list or alist expected for :UPDATE"))
+  (= components (? (t? components)
+                   (copy-tree *components*)
+                   (force-assoc components)))
+  (when remove
+    (= remove (force-list remove))
+    (= components (remove-if [member _ remove] components)))
+  (dolist (i (force-assoc update))
     (assoc-adjoin .i i. components :test #'eq))
-  (append! components add)
+  (append! components (force-assoc add))
   (& (t? params) (= params (request-data)))
   (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params) (symbol-components (cdrlist params))))))
 
@@ -53,17 +52,19 @@
 
 (defun call-url-action (action x)
   (with-temporary *action* action
-    (let next-action (| (funcall .action. x)
-                        (values x. .x))
+    (let n (| (funcall .action. x)
+              (values x. .x))
       (?
-        (t? next-action)
-          .x
-        (values? next-action)
-          (with ((kept next) next-action)
+        (number? n)
+          (progn
+            (+! *components* (list (subseq x 0 n)))
+            (nthcdr n x))
+        (values? n)
+          (with ((kept next) n)
             (!? kept
                 (+! *components* (list (force-list kept))))
             next)
-        next-action))))
+        n))))
 
 (defun call-url-actions-0 (x)
   (& x
