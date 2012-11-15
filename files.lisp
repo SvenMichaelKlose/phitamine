@@ -18,6 +18,7 @@
  "phitamine/session.lisp"
  "phitamine/header.lisp"
  "phitamine/sql.lisp"
+ "phitamine/db.lisp"
  "phitamine/define-sql-table.lisp"
  "phitamine/lhtml.lisp"
  "phitamine/template.lisp"
@@ -25,6 +26,5 @@
  "phitamine/action.lisp"
  "phitamine/ports.lisp"
  "phitamine/paginate.lisp"
- "phitamine/db.lisp"
  "phitamine/phitamine.lisp"
  "config.lisp")

@@ -4,6 +4,7 @@
 (defvar *db-password*)
 (defvar *db-name*)
 (defvar *db-host*)
+(defvar *db-table-prefix*)
 (defvar *db* nil)
 
 (defun db-connect ()
