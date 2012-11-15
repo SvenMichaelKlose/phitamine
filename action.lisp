@@ -50,8 +50,8 @@
 
 (defun call-url-action (action x)
   (with-temporary *action* action
-    (let n (| (funcall .action. x)
-              (values x. .x))
+    (let n (funcall .action. x)
+      (when-debug (logprint `(handler ,action returned ,action n)))
       (?
         (number? n)
           (progn
@@ -69,7 +69,7 @@
      (let c (make-upcase-symbol x.)
        (!? (component-action c)
            (call-url-actions-0 (call-url-action ! (cons c .x)))
-           (tpl-error-404)))))
+           (error "no action found for ~A" x)))));(tpl-error-404)))))
 
 (defun call-url-actions ()
   (= *components* nil)
