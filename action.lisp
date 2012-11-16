@@ -35,7 +35,7 @@
                    (force-alist components)))
   (when remove
     (= remove (force-list remove))
-    (= components (remove-if [member _ remove] components)))
+    (= components (remove-if [member _. remove] components)))
   (dolist (i (force-alist update))
     (assoc-adjoin .i i. components :test #'eq :to-end? t))
   (append! components (force-alist add))
