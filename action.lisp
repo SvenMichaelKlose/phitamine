@@ -51,7 +51,7 @@
 (defun call-url-action (action x)
   (with-temporary *action* action
     (let n (funcall .action. x)
-      (when-debug (logprint `(handler ,action returned ,action n)))
+      (when-debug (logprint `(handler for ,action. returned ,n)))
       (?
         (number? n)
           (progn
