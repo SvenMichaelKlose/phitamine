@@ -4,19 +4,27 @@
 
 phitamine helps you to make PHP scripts with the programming language tré.
 tré is a dialect of the Lisp family of programming languages which can be
-transpiled to many other languages.  In case of PHP, tré brings its own data
-types to bypass PHPs shortcomings.  So, phitamine comes to the rescue and
-translates data from PHP and back.  You'll find easy access to request, form
-and session data.  phitamine also brings you templates that make XML from Lisp
-expressions, and a simple MySQL interface.
+transpiled to many other languages.  In the case of PHP, tré brings its own
+data types to bypass PHPs shortcomings.  So, phitamine comes to the rescue and
+translates data from PHP to tré and back.  You'll find easy access to request,
+form and session data.  phitamine also brings you templates that make XML from
+Lisp expressions, and a simple MySQL interface.
+
+
+## What you need to know and have
+
+This manual does neither explain tré or Lisp.  Also, you should have installed
+your own Linux with Apache, PHP and MySQL to really get fun out of life, even
+if you're not using phitamine.  Last but not least you should be able to use
+the Unix shell.
 
 
 ## How to use phitamine
 
 First, make an empty directory that you can throw away easily just in case.
-Then, unpack the phitamine archive.  You should get a directory of the same
-name.  Then, make an own directory where you'll place your source codes and
-symlink the phitamine directory into yours. Like:
+Then, step in and unpack the phitamine archive.  You should get a directory of
+the same name.  Then, make an own directory where you'll place your source
+codes and symlink the phitamine directory into yours. Like:
 
     tar xvzf phitamine.tar.gz
     mkdir myproject
@@ -24,26 +32,25 @@ symlink the phitamine directory into yours. Like:
     ln -s ../phitamine .
 
 In your project directory, first set up a makefile that will compile your code
-to PHP. Call it "make.lisp":
+to PHP. Call it "make.lisp" and fill it with these lispy lines:
 
     ; A most simple makefile.
     (load "phitamine/make-project.lisp")
-    (make-phitamine-project "Dummy project name"
-                            '("toplevel.lisp"))
+    (make-phitamine-project "Dummy project name" '("toplevel.lisp"))
     (quit)
 
 This makefile compiles some file called "toplevel.lisp", compiles it to PHP and
 saves it as "index.php" into the directory "compiled" which it'll generate for
-you if it's not already there,
+you if it's not already there.
 
 Now for our toplevel script in which everything is supposed to start running:
 
     (phitamine)
     (princ "This works, too.")
 
-phitamine doesn't output anything, except on run-time errors.  Please try to
-compile this two-liner just to see if the version of phitamine you got is
-working at all:
+phitamine doesn't output anything, except on errors.  Please try to compile
+this two-liner just to see if the version of phitamine you got is working at
+all:
 
     tre make.lisp
     ...Helluvalot of compiler messages that finally tell
@@ -58,9 +65,8 @@ right away and try out your first template.
 ## Templates
 
 Now, let's generate some HTML.  You could just print plain HTML, of course, but
-in the world of Lisp, that'd make you miss some really neat features of the
-language.  Instead, we assemble so-called LML expressions and have them
-converted to HTML by phitamine.
+in the world of Lisp, that'd be an incredible waste.  Instead, we assemble
+so-called LML expressions and have them converted to HTML by phitamine.
 
 
 ### LML
@@ -218,6 +224,9 @@ configure the application or claim a part in the page template you call at the
 end of your "toplevel.lisp" file with that line containing
 '(princ (tpl-main))'.
 
+If phitamine hits a component for which no action was defined, it issues
+the good old ERROR 404 PAGE NOT FOUND.
+
 But first, let's extend our already working page with internationalization.
 We enable our visitors to select the language of our page.
 
@@ -229,7 +238,7 @@ We enable our visitors to select the language of our page.
         (a :href (action-url :update '(lang is)) "Íslenska")
         (h1 ,(lang en "Welcome!"
                    de "Willkommen!"
-                   is "Sæll og blessuð!"
+                   is "Sæl og blessuð!"
                    fr "Bonjour!"))
         (form :method "post" :action ""
           (input :type "text" :name "email" :value ,(param-string 'email))
@@ -238,26 +247,31 @@ We enable our visitors to select the language of our page.
 
 Our new page now intends to support four languages which will switch our
 heading.  Function ACTION-URL takes the current URL and changes only the
-language part.  Let's rewrite "toplevel.lisp" with step by step.
+language part.  Let's rewrite "toplevel.lisp" step by step.
 
-First, we tell phitamine that there's an action LANG and a handler of the same
-name.  We can set another function, but one should always keep things as
+First, we tell phitamine that there's an action LANGUAGE and a handler of the
+same name.  We can set another function, but one should always keep things as
 easy as possible:
 
-    (define-action lang)
+    (define-action language)
 
 Then we define the handler:
 
-    (defun lang (x)
+    (defun language (x)
       (= *current-language* (make-symbol .x.))
       2)
 
-When the handler is called, variable X points to the URL component that
+When this handler is called, variable X points to the URL component that
 caused the action to be invoked.  If the visitor picked English it contains
 the list '(lang en).  We simply convert the country code into a symbol and
 set it as the current language.  The returned 2 tells phitamine that the two
-components should remain in the URL, unless specified otherwise in calls
-to ACTION-URL.
+components should remain in the URL.  phitamine then continues with the
+third component in X if it's there.
+
+In case you wonder why the page is already in your preferred language:
+phitamine detects the language set in your browser and sets the current
+language accordingly.  If your language isn't available, the LANG macro in the
+template will fall back to the *default-language* which is English by default.
 
 All left to do is to invoke phitamine (which will process the actions) and to
 call our template:
