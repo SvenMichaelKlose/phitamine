@@ -32,15 +32,15 @@ codes and symlink the phitamine directory into yours. Like:
     ln -s ../phitamine .
 
 In your project directory, first set up a makefile that will compile your code
-to PHP. Call it "make.lisp" and fill it with these lispy lines:
+to PHP. Call it 'make.lisp' and fill it with these lispy lines:
 
     ; A most simple makefile.
     (load "phitamine/make-project.lisp")
     (make-phitamine-project "Dummy project name" '("toplevel.lisp"))
     (quit)
 
-This makefile compiles some file called "toplevel.lisp", compiles it to PHP and
-saves it as "index.php" into the directory "compiled" which it'll generate for
+This makefile compiles some file called 'toplevel.lisp', compiles it to PHP and
+saves it as 'index.php' into the directory 'compiled' which it'll generate for
 you if it's not already there.
 
 Now for our toplevel script in which everything is supposed to start running:
@@ -58,7 +58,7 @@ all:
     php compiled/index.php
 
 This makes the script we want and uses the command-line version of PHP to test
-run it.  You should just get the message "This works, too.", so you can rock on
+run it.  You should just get the message 'This works, too.', so you can rock on
 right away and try out your first template.
 
 
@@ -119,15 +119,15 @@ will give you the desired
 ### Templates
 
 Now for our first template: the index page of our little web site.  Make a
-directory called "templates" where we'll put our LML files.  There, create a
-file named "main.lisp" with the following content:
+directory called 'templates' where we'll put our LML files.  There, create a
+file named 'main.lisp' with the following content:
 
     (html
       (head "Our first page with phitamine")
       (body
         "Even this works."))
 
-To get that template out, change "toplevel.lisp" to:
+To get that template out, change 'toplevel.lisp' to:
 
     (define-template tpl-main :path "templates/main.lisp")
     (phitamine)
@@ -135,9 +135,9 @@ To get that template out, change "toplevel.lisp" to:
 
 The template TPL-MAIN will be available as a function that returns our HTML.
 Compile the script again and better test it on your web server.  If you have
-LAMP right under your fingers you may want to symlink the "compiled" directory
+LAMP right under your fingers you may want to symlink the 'compiled' directory
 into your web space.  Most Linux installations have their web directory at
-"/var/www".  It is so much more comfortable than working with cheap web space
+'/var/www'.  It is so much more comfortable than working with cheap web space
 you can only access via FTP.
 
 
@@ -153,8 +153,8 @@ backquoted automatically, so you must use the quasiquote to insert values:
       (body
         "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
 
-This is how "templates/main.lisp" should look like.  Also change
-"toplevel.lisp" for the X parameter:
+This is how 'templates/main.lisp' should look like.  Also change
+'toplevel.lisp' for the X parameter:
 
     (princ (tpl-main `((X . 42))))
 
@@ -166,7 +166,7 @@ Compile the script and run it in your browser.  You should get
 ### Form data
 
 Form and database records come as associative lists, too.  Our first, simple
-form will show it. Here's the code we put in "templates/main.lisp" to replace
+form will show it. Here's the code we put in 'templates/main.lisp' to replace
 its old code:
 
     (html
@@ -177,7 +177,7 @@ its old code:
           (textarea :name "message" ,(param-string 'message))
           (input :type "submit" :value "Submit..."))))
 
-In "toplevel.lisp" change the call of the template to
+In 'toplevel.lisp' change the call of the template to
 
     (princ (tpl-main (form-data)))
 
@@ -196,8 +196,8 @@ our Apache web server.
 
 To be able to use components, we must configure Apache to NOT
 throw an error message if a directory doesn't exist and to pass the URL to
-our script.  To do that, create a ".htaccess" file next to your generated
-"index.php" (assuming that the script is in the root directory of your
+our script.  To do that, create a '.htaccess' file next to your generated
+'index.php' (assuming that the script is in the root directory of your
 web server):
 
     Options -indexes
@@ -206,14 +206,14 @@ web server):
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule .? index.php$1 [L]
 
-If you placed the script in a subdirectory called "example", you must
+If you placed the script in a subdirectory called 'example', you must
 change the last line to
 
     RewriteRule .? /example/index.php$1 [L]
 
 Now, every time someone tries to open a page in the example directory, like
-"http://whateveryourdomain.is/example/some_subdirectory", it will always invoke
-your script "example/index.php".
+'http://whateveryourdomain.is/example/some_subdirectory', it will always invoke
+your script 'example/index.php'.
 
 
 ### How phitamine deals with URLs and actions
@@ -221,7 +221,7 @@ your script "example/index.php".
 phitamine processes an URL directory name by directory name.  When a name is
 associated with an action its handler is called.  The handler may then
 configure the application or claim a part in the page template you call at the
-end of your "toplevel.lisp" file with that line containing
+end of your 'toplevel.lisp' file with that line containing
 '(princ (tpl-main))'.
 
 If phitamine hits a component for which no action was defined, it issues
@@ -247,7 +247,7 @@ We enable our visitors to select the language of our page.
 
 Our new page now intends to support four languages which will switch our
 heading.  Function ACTION-URL takes the current URL and changes only the
-language part.  Let's rewrite "toplevel.lisp" step by step.
+language part.  Let's rewrite 'toplevel.lisp' step by step.
 
 First, we tell phitamine that there's an action LANGUAGE and a handler of the
 same name.  We can set another function, but one should always keep things as
@@ -280,3 +280,81 @@ call our template:
     (princ (tpl-main (form-data)))
 
 Compile and run the script – Voilà!
+
+
+### Ports – parts of templates
+
+Usually, the action handlers claim a 'port' for which it generates HTML as
+soon as a template requests that port via the PORT function.  Actions can be
+packed into groups that occur in particular ports.  This gives you the
+advantage of being able to have many independent pages in one common template
+which defines the overall design of your site.  Copy the file
+'templates/main.lisp' to 'templates/home.lisp' and edit 'main.lisp' to look
+like this:
+
+    (html
+      (head "Our first phitamine form")
+      (body
+        (a :href (action-url :update '(lang en)) "English") " "
+        (a :href (action-url :update '(lang de)) "Deutsch") " "
+        (a :href (action-url :update '(lang is)) "Íslenska")
+        ,(port 'content)))
+
+This will be our template used for all pages our script generates, so all
+pages come with a language selection.  Then, tweak 'home.lisp' to
+
+    (h1 ,(lang en "Welcome!"
+               de "Willkommen!"
+               is "Sæl og blessuð!"
+               fr "Bonjour!"))
+    (form :method "post" :action ""
+      (input :type "text" :name "email" :value ,(param 'email))
+      (textarea :name "message" ,(param 'message))
+      (input :type "submit" :value "Submit..."))))
+
+In 'toplevel.lisp' we have to define the new template:
+
+    (define-template tpl-home :path "templates/home.lisp")
+
+As you might've guessed we need to claim the CONTENT port.  But to do that,
+we first have to make an action that can claim it.  The global variable
+*DEFAULT-ACTION* has to be set, so phitamine knows what to call if the URL
+contains no action.  Put the following line on top of your 'toplevel.lisp'
+file:
+
+    (= *default-action* "/home")
+
+Then define the action and handler for HOME:
+
+    (define-action home)
+
+    (defun home (x)
+      (set-port (tpl-home))
+      1)
+
+The macro SET-PORT tells phitamine to call the TPL-HOME template for its port.
+And, because we haven't defined a port for the HOME action yet, phitamine
+assumes that you want the CONTENT port.
+
+Your new 'toplevel.lisp' should now look like this:
+
+    (= *default-action* "/home")
+
+    (define-template tpl-main :path "templates/main.lisp")
+    (define-template tpl-home :path "templates/home.lisp")
+
+    (define-action language)
+
+    (defun language (x)
+      (= *current-language* (make-symbol .x.))
+      2)
+
+    (define-action home)
+
+    (defun home (x)
+      (set-port (tpl-home (form-data)))
+      1)
+
+    (phitamine)
+    (princ (tpl-main))
+
