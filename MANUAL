@@ -1,0 +1,211 @@
+# An introduction to phitamine
+
+## Overview
+
+phitamine helps you to make PHP scripts with the programming language tré.
+tré is a dialect of the Lisp family of programming languages which can be
+transpiled to many other languages.  In case of PHP, tré brings its own data
+types to bypass PHPs shortcomings.  So, phitamine comes to the rescue and
+translates data from PHP and back.  You'll find easy access to request, form
+and session data.  phitamine also brings you templates that make XML from Lisp
+expressions, and a simple MySQL interface.
+
+
+## How to use phitamine
+
+First, make an empty directory that you can throw away easily just in case.
+Then, unpack the phitamine archive.  You should get a directory of the same
+name.  Then, make an own directory where you'll place your source codes and
+symlink the phitamine directory into yours. Like:
+
+    tar xvzf phitamine.tar.gz
+    mkdir myproject
+    cd myproject
+    ln -s ../phitamine .
+
+In your project directory, first set up a makefile that will compile your code
+to PHP. Call it "make.lisp":
+
+    ; A most simple makefile.
+    (load "phitamine/make-project.lisp")
+    (make-phitamine-project "Dummy project name"
+                            '("toplevel.lisp"))
+    (quit)
+
+This makefile compiles some file called "toplevel.lisp", compiles it to PHP and
+saves it as "index.php" into the directory "compiled" which it'll generate for
+you if it's not already there,
+
+Now for our toplevel script in which everything is supposed to start running:
+
+    (phitamine)
+    (princ "This works, too.")
+
+phitamine doesn't output anything, except on run-time errors.  Please try to
+compile this two-liner just to see if the version of phitamine you got is
+working at all:
+
+    tre make.lisp
+    ...Helluvalot of compiler messages that finally tell
+       you that everything is O.K. should occur here...
+    php compiled/index.php
+
+This makes the script we want and uses the command-line version of PHP to test
+run it.  You should just get the message "This works, too.", so you can rock on
+right away and try out your first template.
+
+
+## Templates
+
+Now, let's generate some HTML.  You could just print plain HTML, of course, but
+in the world of Lisp, that'd make you miss some really neat features of the
+language.  Instead, we assemble so-called LML expressions and have them
+converted to HTML by phitamine.
+
+
+### LML
+
+In LML every list is a tag.  The first element must be a symbol for the tag
+name.  A simple
+
+    (hr)
+
+will give you
+
+    <hr/>
+
+later on.  HTML5 has some tags that may not be closed at all, like the HR
+element but I guarantee that browsers won't fail you on syntactically correct
+XML. 
+
+If you want attributes, use keyword symbols followed by values.  A keyword
+symbol must never stand alone.
+
+    (hr :class "dont_use_classes_too_often")
+
+will give you
+
+    <hr class="dont_use_classes_too_often"/>
+
+But
+
+    (hr :class)
+
+will just break with an error message.  Inside an alement you can pack more
+elements or just text nodes:
+
+    (p "Go " (a :href "/" "home").)
+
+will give you
+
+    <p>Go <a href="/">home</a>.</p>
+
+Should you need a tag with no contents but with an extra ending tag, like a
+TEXTAREA element, use an empty string for the content:
+
+    (textarea :name "message" "")
+
+will give you the desired
+
+    <textarea name="message"></textarea>
+
+
+### Templates
+
+Now for our first template: the index page of our little web site.  Make a
+directory called "templates" where we'll put our LML files.  There, create a
+file named "main.lisp" with the following content:
+
+    (html
+      (head "Our first page with phitamine")
+      (body
+        "Even this works."))
+
+To get that template out, change "toplevel.lisp" to:
+
+    (define-template tpl-main :path "templates/main.lisp")
+    (phitamine)
+    (princ (tpl-main))
+
+The template TPL-MAIN will be available as a function that returns our HTML.
+Compile the script again and better test it on your web server.  If you have
+LAMP right under your fingers you may want to symlink the "compiled" directory
+into your web space.  Most Linux installations have their web directory at
+"/var/www".  It is so much more comfortable than working with cheap web space
+you can only access via FTP.
+
+
+### Template parameters
+
+Parameters give templates their dynamic content.  They're passed to a template
+function as an associative lists as the first argument.  Inside the template
+use function PARAM to get a particular parameter.  The LML expressions are
+backquoted automatically, so you must use the quasiquote to insert values:
+
+    (html
+      (head "Our first dynamic template")
+      (body
+        "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
+
+This is how "templates/main.lisp" should look like.  Also change
+"toplevel.lisp" for the X parameter:
+
+    (princ (tpl-main `((X . 42))))
+
+Compile the script and run it in your browser.  You should get
+
+    Parameter X has the value "42".
+
+
+### Form data
+
+Form and database records come as associative lists, too.  Our first, simple
+form will show it. Here's the code we put in "templates/main.lisp" to replace
+its old code:
+
+    (html
+      (head "Our first phitamine form")
+      (body
+        (form :method "post" :action ""
+          (input :type "text" :name "email" :value ,(param-string 'email))
+          (textarea :name "message" ,(param-string 'message))
+          (input :type "submit" :value "Submit..."))))
+
+In "toplevel.lisp" change the call of the template to
+
+    (princ (tpl-main (form-data)))
+
+That's it.  Whenever you post the form, it will return with its
+former content.  phitamine also makes it easy to treat multiple posted records
+or files, but more on this later.
+
+
+## Actions
+
+phitamine has a special mechanism to link parts of a request URL to handler
+functions, called "actions".  We call the directory and file names "URL
+components".
+
+
+### Preparing actions
+
+To be able to use components, we must configure Apache to NOT
+throw an error message if a directory doesn't exist and to pass the URL to
+our script.  To do that, create a ".htaccess" file next to your generated
+"index.php" (assuming that the script is in the root directory of your
+web server):
+
+    Options -indexes
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule .? index.php$1 [L]
+
+If you placed the script in a subdirectory called "example", you must
+change the last line to
+
+    RewriteRule .? /example/index.php$1 [L]
+
+Now, every time someone tries to open a page in the example directory, like
+"http://whateveryourdomain.is/example/some_subdirectory", it will always invoke
+your script and give it the component "some_subdirectory".
