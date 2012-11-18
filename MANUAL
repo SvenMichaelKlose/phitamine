@@ -182,12 +182,11 @@ or files, but more on this later.
 
 ## Actions
 
-phitamine has a special mechanism to link parts of a request URL to handler
-functions, called "actions".  We call the directory and file names "URL
-components".
+phitamine has a special mechanism to process URLs.  But first, let's set up
+our Apache web server.
 
 
-### Preparing actions
+### Preparing Apache for actions
 
 To be able to use components, we must configure Apache to NOT
 throw an error message if a directory doesn't exist and to pass the URL to
@@ -208,4 +207,62 @@ change the last line to
 
 Now, every time someone tries to open a page in the example directory, like
 "http://whateveryourdomain.is/example/some_subdirectory", it will always invoke
-your script and give it the component "some_subdirectory".
+your script "example/index.php".
+
+
+### How phitamine deals with URLs and actions
+
+phitamine processes an URL directory name by directory name.  When a name is
+associated with an action its handler is called.  The handler may then
+configure the application or claim a part in the page template you call at the
+end of your "toplevel.lisp" file with that line containing
+'(princ (tpl-main))'.
+
+But first, let's extend our already working page with internationalization.
+We enable our visitors to select the language of our page.
+
+    (html
+      (head "Our first phitamine form")
+      (body
+        (a :href (action-url :update '(lang en)) "English") " "
+        (a :href (action-url :update '(lang de)) "Deutsch") " "
+        (a :href (action-url :update '(lang is)) "Íslenska")
+        (h1 ,(lang en "Welcome!"
+                   de "Willkommen!"
+                   is "Sæll og blessuð!"
+                   fr "Bonjour!"))
+        (form :method "post" :action ""
+          (input :type "text" :name "email" :value ,(param-string 'email))
+          (textarea :name "message" ,(param-string 'message))
+          (input :type "submit" :value "Submit..."))))
+
+Our new page now intends to support four languages which will switch our
+heading.  Function ACTION-URL takes the current URL and changes only the
+language part.  Let's rewrite "toplevel.lisp" with step by step.
+
+First, we tell phitamine that there's an action LANG and a handler of the same
+name.  We can set another function, but one should always keep things as
+easy as possible:
+
+    (define-action lang)
+
+Then we define the handler:
+
+    (defun lang (x)
+      (= *current-language* (make-symbol .x.))
+      2)
+
+When the handler is called, variable X points to the URL component that
+caused the action to be invoked.  If the visitor picked English it contains
+the list '(lang en).  We simply convert the country code into a symbol and
+set it as the current language.  The returned 2 tells phitamine that the two
+components should remain in the URL, unless specified otherwise in calls
+to ACTION-URL.
+
+All left to do is to invoke phitamine (which will process the actions) and to
+call our template:
+
+    (phitamine)
+    (princ (tpl-main (form-data)))
+
+Compile and run the script – Voilà!
