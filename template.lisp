@@ -3,14 +3,16 @@
 (defvar *template-parameters* nil)
 (defvar *currently-processed-templates* nil)
 
-(defun param (name &key (if-exists? nil))
-  (!? (assoc name *template-parameters* :test #'eq)
-      .!
-      (unless if-exists?
-        (princ "<br>Current template parameters:<br>")
-        (print *template-parameters*)
-        (princ "<br>")
-        (error "template parameter ~A not found" (symbol-name name)))))
+(defun param-error (name)
+  (princ "<br>Current template parameters:<br>")
+  (print *template-parameters*)
+  (princ "<br>")
+  (error "template parameter ~A not found" (symbol-name name)))
+
+(defun param (name &key (required? nil))
+  (!?
+    (assoc name *template-parameters* :test #'eq) .!
+    required?      (param-error name)))
 
 (defmacro define-template (name &key path)
   (print-definition `(define-template ,name :path ,path))
