@@ -5,26 +5,25 @@
 phitamine helps you to make PHP scripts with the programming language tré.
 tré is a dialect of the Lisp family of programming languages which can be
 transpiled to many other languages.  In the case of PHP, tré brings its own
-data types to bypass PHPs shortcomings.  So, phitamine comes to the rescue and
-translates data from PHP to tré and back.  You'll find easy access to request,
-form and session data.  phitamine also brings you templates that make XML from
-Lisp expressions, and a simple MySQL interface.
+data types to bypass PHPs shortcomings.  phitamine has to come to the rescue
+and translate data from PHP to tré and back.  It gives you easy access to
+request, form and session data.  phitamine also brings you templates that make
+XML from Lisp expressions, and a simple MySQL interface.
 
 
 ## What you need to know and have
 
 This manual does neither explain tré or Lisp.  Also, you should have installed
-your own Linux with Apache, PHP and MySQL to really get fun out of life, even
-if you're not using phitamine.  Last but not least you should be able to use
-the Unix shell.
+your own Linux with Apache, PHP and MySQL to really get some fun out of life.
+Last but not least you should be able to use the Unix shell.
 
 
 ## How to use phitamine
 
-First, make an empty directory that you can throw away easily just in case.
+First, make an empty directory that you can throw away easily, just in case.
 Then, step in and unpack the phitamine archive.  You should get a directory of
-the same name.  Then, make an own directory where you'll place your source
-codes and symlink the phitamine directory into yours. Like:
+the same name.  Then, make an own directory where you'll place your own source
+codes and symlink the phitamine directory into yours. Like this, in the shell:
 
     tar xvzf phitamine.tar.gz
     mkdir myproject
@@ -34,13 +33,12 @@ codes and symlink the phitamine directory into yours. Like:
 In your project directory, first set up a makefile that will compile your code
 to PHP. Call it 'make.lisp' and fill it with these lispy lines:
 
-    ; A most simple makefile.
     (load "phitamine/make-project.lisp")
     (make-phitamine-project "Dummy project name" '("toplevel.lisp"))
     (quit)
 
-This makefile compiles some file called 'toplevel.lisp', compiles it to PHP and
-saves it as 'index.php' into the directory 'compiled' which it'll generate for
+This makefile takes a file called 'toplevel.lisp', compiles it to PHP and
+saves it as 'index.php' into the directory 'compiled', which it'll generate for
 you if it's not already there.
 
 Now for our toplevel script in which everything is supposed to start running:
@@ -50,7 +48,7 @@ Now for our toplevel script in which everything is supposed to start running:
 
 phitamine doesn't output anything, except on errors.  Please try to compile
 this two-liner just to see if the version of phitamine you got is working at
-all:
+all. Again, in the shell:
 
     tre make.lisp
     ...Helluvalot of compiler messages that finally tell
@@ -76,12 +74,12 @@ name.  A simple
 
     (hr)
 
-will give you
+will translate to
 
     <hr/>
 
-later on.  HTML5 has some tags that may not be closed at all, like the HR
-element but I guarantee that browsers won't fail you on syntactically correct
+HTML5 has some tags that may not be closed at all, like the HR element but I
+guarantee you that a modern browser won't fail you on syntactically correct
 XML. 
 
 If you want attributes, use keyword symbols followed by values.  A keyword
@@ -102,18 +100,21 @@ elements or just text nodes:
 
     (p "Go " (a :href "/" "home").)
 
-will give you
+will result in
 
     <p>Go <a href="/">home</a>.</p>
 
 Should you need a tag with no contents but with an extra ending tag, like a
-TEXTAREA element, use an empty string for the content:
+TEXTAREA element requires, use an empty string for the content:
 
     (textarea :name "message" "")
 
 will give you the desired
 
     <textarea name="message"></textarea>
+
+The LML2XML converter doesn't translate characters to XML entities, so you
+can still insert HTML snippets when you feel like it.
 
 
 ### Templates
@@ -134,9 +135,9 @@ To get that template out, change 'toplevel.lisp' to:
     (princ (tpl-main))
 
 The template TPL-MAIN will be available as a function that returns our HTML.
-Compile the script again and better test it on your web server.  If you have
-LAMP right under your fingers you may want to symlink the 'compiled' directory
-into your web space.  Most Linux installations have their web directory at
+Compile the script again and test it on your web server.  If you have LAMP
+right under your fingers you may want to symlink the 'compiled' directory into
+your web space.  Most Linux installations have their web directory at
 '/var/www'.  It is so much more comfortable than working with cheap web space
 you can only access via FTP.
 
@@ -146,15 +147,15 @@ you can only access via FTP.
 Parameters give templates their dynamic content.  They're passed to a template
 function as an associative lists as the first argument.  Inside the template
 use function PARAM to get a particular parameter.  The LML expressions are
-backquoted automatically, so you must use the quasiquote to insert values:
+BACKQUOTEd automatically, so you must use the QUASIQUOTE to insert values.
+This is how 'templates/main.lisp' should look like:
 
     (html
       (head "Our first dynamic template")
       (body
         "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
 
-This is how 'templates/main.lisp' should look like.  Also change
-'toplevel.lisp' for the X parameter:
+Also change 'toplevel.lisp' to set the X parameter:
 
     (princ (tpl-main `((X . 42))))
 
@@ -173,8 +174,8 @@ its old code:
       (head "Our first phitamine form")
       (body
         (form :method "post" :action ""
-          (input :type "text" :name "email" :value ,(param-string 'email))
-          (textarea :name "message" ,(param-string 'message))
+          (input :type "text" :name "email" :value ,(param 'email))
+          (textarea :name "message" ,(param 'message))
           (input :type "submit" :value "Submit..."))))
 
 In 'toplevel.lisp' change the call of the template to
@@ -241,8 +242,8 @@ We enable our visitors to select the language of our page.
                    is "Sæl og blessuð!"
                    fr "Bonjour!"))
         (form :method "post" :action ""
-          (input :type "text" :name "email" :value ,(param-string 'email))
-          (textarea :name "message" ,(param-string 'message))
+          (input :type "text" :name "email" :value ,(param 'email))
+          (textarea :name "message" ,(param 'message))
           (input :type "submit" :value "Submit..."))))
 
 Our new page now intends to support four languages which will switch our
