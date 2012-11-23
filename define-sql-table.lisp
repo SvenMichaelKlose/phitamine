@@ -25,7 +25,7 @@
          (number (caar (*db*.exec (sql-clause-select :table (+ *db-table-prefix* ,table-name) :fields '("COUNT(1)") :where (force-alist fields))))))
        (defun ,($ 'get-distinct- name) (field &key (where nil) (order-by nil) (direction nil))
          (carlist (*db*.exec (sql-clause-select :table (+ *db-table-prefix* ,table-name) :fields `(,,(+ "DISTINCT(" (symbol-name field) ")"))
-                                                :where (force-alist where)))))
+                                                :where (force-alist where) :order-by order-by :direction direction))))
        (defun ,($ 'select- name) (&key (fields nil) (where nil) (limit nil) (offset nil) (order-by nil) (direction nil))
          (*db*.exec (sql-clause-select :table (+ *db-table-prefix* ,table-name) :fields fields
                                        :where (force-alist where)
