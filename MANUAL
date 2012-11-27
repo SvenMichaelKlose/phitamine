@@ -1,3 +1,5 @@
+#!/usr/bin/less
+
 # An introduction to phitamine
 
 ## Overview
@@ -5,17 +7,18 @@
 phitamine helps you to make PHP scripts with the programming language tré.
 tré is a dialect of the Lisp family of programming languages which can be
 transpiled to many other languages.  In the case of PHP, tré brings its own
-data types to bypass PHPs shortcomings.  phitamine has to come to the rescue
-and translate data from PHP to tré and back.  It gives you easy access to
-request, form and session data.  phitamine also brings you templates that make
-XML from Lisp expressions, and a simple MySQL interface.
+data types to bypass PHPs shortcomings.  So, phitamine has to come to the
+rescue and translate data from PHP to tré and back.  It gives you easy access
+to request, form and session data.  phitamine also brings you templates that
+make XML from Lisp expressions, and a simple MySQL interface.
 
 
 ## What you need to know and have
 
-This manual does neither explain tré or Lisp.  Also, you should have installed
-your own Linux with Apache, PHP and MySQL to really get some fun out of life.
-Last but not least you should be able to use the Unix shell.
+This manual does neither explain tré, Lisp, HTML or any other stuff you need
+to develop a web site.  Also, you should have installed your own Linux with
+Apache, PHP and MySQL to really get some fun out of life.  Last but not least
+you should be able to use the Unix shell.
 
 
 ## How to use phitamine
@@ -283,7 +286,7 @@ call our template:
 Compile and run the script – Voilà!
 
 
-### Ports – parts of templates
+### Ports – many templates and one design
 
 Usually, the action handlers claim a 'port' for which it generates HTML as
 soon as a template requests that port via the PORT function.  Actions can be
@@ -358,4 +361,28 @@ Your new 'toplevel.lisp' should now look like this:
 
     (phitamine)
     (princ (tpl-main))
+
+### Port groups
+
+Once you've set up a useful part of your application, you sure as hell want to
+reuse it later on.  Like a user management with login and registration form.
+Such a module has many actions and you don't want to declare every single
+action's port in case you don't want it in the CONTENT port.  Therefore,
+actions are packed into _groups_ which can be associated with a port.  If you
+don't specify a group when defining an action, it is set to DEFAULT. So
+
+    (define-action login)
+
+is in fact
+
+    (define-action login :group default)
+
+Let's say your user management module set up a couple of actions:
+
+    (define-action login :group login)
+    (define-action logout :group login)
+
+you can put their group LOGIN into port NAVIGATION with SET-GROUP-PORT:
+
+    (set-group-port 'login 'navigation)
 
