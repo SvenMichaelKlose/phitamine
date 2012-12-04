@@ -8,7 +8,7 @@
 (defun form-data ()
   (| *form-data*
      (& (has-form?)
-        (alet (hash-assoc *_POST*)
+        (alet (hash-alist *_POST*)
           (= *form-data* (pairlist (make-upcase-symbols (carlist !))
                                    (cdrlist !)))))))
 

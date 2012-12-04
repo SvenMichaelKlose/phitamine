@@ -1,4 +1,4 @@
-;;;;; Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
 
 (defvar *request-data* nil)
 
@@ -8,7 +8,7 @@
 (defun request-data ()
   (| *request-data*
      (& (has-request?)
-        (= *request-data* (aremove 'phpsessid (hash-assoc *_REQUEST*))))))
+        (= *request-data* (aremove 'phpsessid (hash-alist *_REQUEST*))))))
 
 (defun request (name)
   (assoc-value name (request-data)))
