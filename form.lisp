@@ -15,6 +15,9 @@
 (defun form-value (x)
   (assoc-value x (form-data)))
 
+(defun form-string (x)
+  (| (assoc-value x (form-data)) ""))
+
 (defun form-complete? ()
   (& (has-form?)
      (!? (form-data)
