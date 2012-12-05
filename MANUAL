@@ -4,13 +4,14 @@
 
 ## Overview
 
-phitamine helps you to make PHP scripts with the programming language tré.
-tré is a dialect of the Lisp family of programming languages which can be
-transpiled to many other languages.  In the case of PHP, tré brings its own
-data types to bypass PHPs shortcomings.  So, phitamine has to come to the
-rescue and translate data from PHP to tré and back.  It gives you easy access
-to request, form and session data.  phitamine also brings you templates that
-make XML from Lisp expressions, and a simple MySQL interface.
+phitamine helps you to make LAMP sites with the programming language tré.
+
+phitamine gives you:
+
+    - Easy access to request, form and session data.
+    - Templates that make XML from Lisp expressions.
+    - A simple MySQL interface.
+    - Modular associations of URLs with functions.
 
 
 ## What you need to know and have
