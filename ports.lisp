@@ -5,7 +5,7 @@
 (defvar *ports* nil)
 
 (defun request-port (port fun)
-  (assoc-adjoin fun port *requested-ports* :test #'eq))
+  (aadjoin! fun port *requested-ports* :test #'eq))
 
 (defun (= group-port) (port group)
   (acons! group port *group-ports*))
