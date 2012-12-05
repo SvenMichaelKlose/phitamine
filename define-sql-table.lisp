@@ -1,7 +1,7 @@
 ;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
 
 (defmacro define-sql-table (name singular-name &rest fields)
-  (acons name fields *sql-table-definitions*)
+  (add-sql-table-definition name fields)
   (let table-name (string-downcase (symbol-name name))
     `(progn
        (defun ,($ 'find- name) (&optional (fields nil) &key (limit nil) (offset nil) (order-by nil) (direction nil))
