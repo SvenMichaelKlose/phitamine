@@ -8,44 +8,41 @@ phitamine helps you to make LAMP sites with the programming language tré.
 
 phitamine gives you:
 
-    - Easy access to request, form and session data.
-    - Templates that make XML from Lisp expressions.
-    - A simple MySQL interface.
-    - Modular associations of URLs with functions.
+    - easy access to request, form and session data.
+    - templates that make XML from Lisp expressions.
+    - a simple MySQL interface.
+    - modular associations of URLs with functions.
 
 
 ## What you need to know and have
 
 This manual does neither explain tré, Lisp, HTML or any other stuff you need
-to develop a web site.  Also, you should have installed your own Linux with
-Apache, PHP and MySQL to really get some fun out of life.  Last but not least
-you should be able to use the Unix shell.
+to develop a web site.  You should also have installed your own Linux with
+Apache, PHP and MySQL installed to really get some fun out of life.  Last but
+not least you should be able to use the Unix shell.
 
 
 ## How to use phitamine
 
-First, make an empty directory that you can throw away easily, just in case.
-Then, step in and unpack the phitamine archive.  You should get a directory of
-the same name.  Then, make an own directory where you'll place your own source
-codes and symlink the phitamine directory into yours. Like this, in the shell:
+Make an empty directory, step in and unpack the phitamine archive.  You should
+get a directory of the same name.  Then, make an own directory where you'll
+place your source codes and symlink the phitamine directory into it:
 
     tar xvzf phitamine.tar.gz
     mkdir myproject
     cd myproject
     ln -s ../phitamine .
 
-In your project directory, first set up a makefile that will compile your code
-to PHP. Call it 'make.lisp' and fill it with these lispy lines:
+In your project directory, first set up a makefile that will compile your code.
+Call it 'make.lisp' and insert this:
 
     (load "phitamine/make-project.lisp")
     (make-phitamine-project "Dummy project name" '("toplevel.lisp"))
     (quit)
 
 This makefile takes a file called 'toplevel.lisp', compiles it to PHP and
-saves it as 'index.php' into the directory 'compiled', which it'll generate for
-you if it's not already there.
-
-Now for our toplevel script in which everything is supposed to start running:
+saves it as 'index.php' in the automatically generated directory 'compiled'.
+Create 'toplevel.lisp' with this:
 
     (phitamine)
     (princ "This works, too.")
@@ -55,8 +52,6 @@ this two-liner just to see if the version of phitamine you got is working at
 all. Again, in the shell:
 
     tre make.lisp
-    ...Helluvalot of compiler messages that finally tell
-       you that everything is O.K. should occur here...
     php compiled/index.php
 
 This makes the script we want and uses the command-line version of PHP to test
@@ -66,7 +61,7 @@ right away and try out your first template.
 
 ## Templates
 
-Now, let's generate some HTML.  You could just print plain HTML, of course, but
+Let's generate some HTML.  You could just print plain HTML, of course, but
 in the world of Lisp, that'd be an incredible waste.  Instead, we assemble
 so-called LML expressions and have them converted to HTML by phitamine.
 
@@ -117,7 +112,7 @@ will give you the desired
 
     <textarea name="message"></textarea>
 
-The LML2XML converter doesn't translate characters to XML entities, so you
+The LML to XML converter doesn't translate characters to XML entities, so you
 can still insert HTML snippets when you feel like it.
 
 
@@ -171,24 +166,22 @@ Compile the script and run it in your browser.  You should get
 ### Form data
 
 Form and database records come as associative lists, too.  Our first, simple
-form will show it. Here's the code we put in 'templates/main.lisp' to replace
+form will show that. Here's the code we put in 'templates/main.lisp' to replace
 its old code:
 
     (html
       (head "Our first phitamine form")
       (body
         (form :method "post" :action ""
-          (input :type "text" :name "email" :value ,(param 'email))
-          (textarea :name "message" ,(param 'message))
+          (input :type "text" :name "email" :value ,(form-value 'email))
+          (textarea :name "message" ,(form-value 'message))
           (input :type "submit" :value "Submit..."))))
 
-In 'toplevel.lisp' change the call of the template to
-
-    (princ (tpl-main (form-data)))
+FORM-VALUE reads values from the posted form data.
 
 That's it.  Whenever you post the form, it will return with its
 former content.  phitamine also makes it easy to treat multiple posted records
-or files, but more on this later.
+and files, but more on that later.
 
 
 ## Actions

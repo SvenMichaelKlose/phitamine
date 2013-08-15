@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
 
 (defvar *template-parameters* nil)
 (defvar *currently-processed-templates* nil)
@@ -26,6 +26,6 @@
 (defun template-list (template records)
   (when records
     (let index 0
-      (apply #'string-concat (filter [with-temporary *template-parameters* (cons (cons 'index (1+! index)) *template-parameters*)
+      (apply #'string-concat (filter [with-temporary *template-parameters* (cons (cons 'index (++! index)) *template-parameters*)
                                        (funcall template _)]
                                      records)))))

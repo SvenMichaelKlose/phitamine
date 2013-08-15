@@ -1,7 +1,8 @@
-;;;;; Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+;;;;; Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
 ("phitamine/caroshi/base/lang.lisp"
  "phitamine/caroshi/base/url/path-pathlist.lisp"
  "phitamine/caroshi/base/url/url-assignments.lisp"
+ "phitamine/caroshi/base/php/superglobals.lisp"
  "phitamine/caroshi/base/php/request-path.lisp"
  "phitamine/caroshi/server/php/standalone/log.lisp"
  "phitamine/caroshi/sql/utils-querystring.lisp"
