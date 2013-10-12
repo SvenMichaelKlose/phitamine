@@ -8,5 +8,5 @@
             "NULL;"))
 
 (defun (= session) (v x)
-  (%setq nil (%%native "$_SESSION[$" x "->n] = $" v))
+  (%= nil (%%native "$_SESSION[$" x "->n] = $" v))
   v)
