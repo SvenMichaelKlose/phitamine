@@ -5,8 +5,8 @@
 (defun make-phitamine-project (name files)
   (unix-sh-mkdir "compiled")
   (make-project name
+                (+ (read-file "phitamine/files.lisp")
+                   files)
                 :transpiler  *php-transpiler*
                 :obfuscate?  nil
-                :files       (+ (read-file "phitamine/files.lisp")
-                                files)
                 :emitter     [put-file "compiled/index.php" _]))
