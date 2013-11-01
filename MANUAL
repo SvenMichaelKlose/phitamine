@@ -41,8 +41,7 @@ Call it 'make.lisp' and insert this:
     (quit)
 
 This makefile takes a file called 'toplevel.lisp', compiles it to PHP and
-saves it as 'index.php' in the automatically generated directory 'compiled'.
-Create 'toplevel.lisp' with this:
+saves it as 'compiled/index.php'.  Create 'toplevel.lisp' with this:
 
     (phitamine)
     (princ "This works, too.")
@@ -99,12 +98,12 @@ elements or just text nodes:
 
     (p "Go " (a :href "/" "home").)
 
-will result in
+will give you
 
     <p>Go <a href="/">home</a>.</p>
 
 Should you need a tag with no contents but with an extra ending tag, like a
-TEXTAREA element requires, use an empty string for the content:
+TEXTAREA element , use an empty string for the content:
 
     (textarea :name "message" "")
 
@@ -113,7 +112,7 @@ will give you the desired
     <textarea name="message"></textarea>
 
 The LML to XML converter doesn't translate characters to XML entities, so you
-can still insert HTML snippets when you feel like it.
+can nest HTML generators.
 
 
 ### Templates
@@ -143,10 +142,10 @@ you can only access via FTP.
 
 ### Template parameters
 
-Parameters give templates their dynamic content.  They're passed to a template
-function as an associative lists as the first argument.  Inside the template
-use function PARAM to get a particular parameter.  The LML expressions are
-BACKQUOTEd automatically, so you must use the QUASIQUOTE to insert values.
+Parameters give templates their dynamic content.  They're passed to template
+functions in the form of an associative list.  Inside the template function
+PARAM gets you a particular parameter.  The LML expressions are
+BACKQUOTEd automatically, so you must use QUASIQUOTE to insert values.
 This is how 'templates/main.lisp' should look like:
 
     (html
@@ -160,12 +159,12 @@ Also change 'toplevel.lisp' to set the X parameter:
 
 Compile the script and run it in your browser.  You should get
 
-    Parameter X has the value "42".
+    Parameter X has the value 42.
 
 
 ### Form data
 
-Form and database records come as associative lists, too.  Our first, simple
+Form and database records come as associative lists as well.  Our first, simple
 form will show that. Here's the code we put in 'templates/main.lisp' to replace
 its old code:
 
@@ -173,9 +172,9 @@ its old code:
       (head "Our first phitamine form")
       (body
         (form :method "post" :action ""
-          (input :type "text" :name "email" :value ,(form-value 'email))
+          (input    :name "email" :type "text" :value ,(form-value 'email))
           (textarea :name "message" ,(form-value 'message))
-          (input :type "submit" :value "Submit..."))))
+          (input    :type "submit" :value "Submit..."))))
 
 FORM-VALUE reads values from the posted form data.
 
@@ -195,8 +194,7 @@ our Apache web server.
 To be able to use components, we must configure Apache to NOT
 throw an error message if a directory doesn't exist and to pass the URL to
 our script.  To do that, create a '.htaccess' file next to your generated
-'index.php' (assuming that the script is in the root directory of your
-web server):
+'index.php':
 
     Options -indexes
     RewriteEngine on
@@ -204,6 +202,7 @@ web server):
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule .? index.php$1 [L]
 
+This assumes that the script is in the root directory of your web server.
 If you placed the script in a subdirectory called 'example', you must
 change the last line to
 
@@ -216,16 +215,15 @@ your script 'example/index.php'.
 
 ### How phitamine deals with URLs and actions
 
-phitamine processes an URL directory name by directory name.  When a name is
-associated with an action its handler is called.  The handler may then
-configure the application or claim a part in the page template you call at the
-end of your 'toplevel.lisp' file with that line containing
-'(princ (tpl-main))'.
+phitamine processes an URL directory by directory.  When a directoriy's name is
+associated with a handler (called `action') that handler is called, so it can
+configure the application or claim a part in the page generated in TPL-MAIN
+called in your 'toplevel.lisp'.
 
 If phitamine hits a component for which no action was defined, it issues
-the good old ERROR 404 PAGE NOT FOUND.
+the good old mood–shifting ERROR 404 PAGE NOT FOUND.
 
-But first, let's extend our already working page with internationalization.
+Let's extend our already working page with internationalization.
 We enable our visitors to select the language of our page.
 
     (html
@@ -362,7 +360,7 @@ Once you've set up a useful part of your application, you sure as hell want to
 reuse it later on.  Like a user management with login and registration form.
 Such a module has many actions and you don't want to declare every single
 action's port in case you don't want it in the CONTENT port.  Therefore,
-actions are packed into _groups_ which can be associated with a port.  If you
+actions are packed into groups which can be associated with a port.  If you
 don't specify a group when defining an action, it is set to DEFAULT. So
 
     (define-action login)

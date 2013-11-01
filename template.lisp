@@ -19,13 +19,13 @@
   `(defun ,name (&optional (params nil))
      (& (member ',name *currently-processed-templates*)
         (error "template ~A called recursively" ',name))
-     (with-temporaries (*template-parameters* (append params *template-parameters*)
-                        *currently-processed-templates* (cons ',name *currently-processed-templates*))
+     (with-temporaries (*template-parameters*            (+ params *template-parameters*)
+                        *currently-processed-templates*  (. ',name *currently-processed-templates*))
        (apply #'string-concat (filter #'lml2xml ,(list 'backquote (dot-expand (read-file-all path))))))))
 
 (defun template-list (template records)
   (when records
     (let index 0
-      (apply #'string-concat (filter [with-temporary *template-parameters* (cons (cons 'index (++! index)) *template-parameters*)
+      (apply #'string-concat (filter [with-temporary *template-parameters* (. (. 'index (++! index)) *template-parameters*)
                                        (funcall template _)]
                                      records)))))

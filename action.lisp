@@ -8,7 +8,7 @@
 (defun add-action (component &key (group 'default) (handler nil))
   (& (assoc component *actions*)
      (error "action ~A is already defined" component))
-  (acons! component (cons handler group) *actions*))
+  (acons! component (. handler group) *actions*))
 
 (defmacro define-action (component &key (group 'default) (handler nil))
   (print-definition `(define-action ,component :handler ,handler :group ,group))
@@ -71,7 +71,7 @@
   (& x
      (let c (make-upcase-symbol x.)
        (!? (component-action c)
-           (call-url-actions-0 (call-url-action ! (cons c .x)))
+           (call-url-actions-0 (call-url-action ! (. c .x)))
            (error "no action found for ~A" x)))));(tpl-error-404)))))
 
 (defun call-url-actions ()

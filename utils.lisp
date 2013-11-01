@@ -1,5 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
 
 (defun empty? (x)
-  (| (not x)
-     (== 0 (length x))))
+  (zero? (length x)))

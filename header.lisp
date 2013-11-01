@@ -11,4 +11,4 @@
        mime-type)
       (header (+ "Content-type: " mime-type (!? charset (+ "; charset=" charset) "")))
     charset
-      (error "CHARSET must be specified together with a MIME-TYPE")))
+      (error "CHARSET must be specified together with a MIME-TYPE.")))
