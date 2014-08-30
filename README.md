@@ -32,6 +32,7 @@ place your source codes and symlink the phitamine directory into it:
     mkdir myproject
     cd myproject
     ln -s ../phitamine .
+    ln -s ../tre/environment .
 
 In your project directory, first set up a makefile that will compile your code.
 Call it 'make.lisp' and insert this:
@@ -377,4 +378,3 @@ Let's say your user management module set up a couple of actions:
 you can put their group LOGIN into port NAVIGATION with SET-GROUP-PORT:
 
     (set-group-port 'login 'navigation)
-
