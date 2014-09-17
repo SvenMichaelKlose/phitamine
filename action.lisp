@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
 
 (defvar *home-components* nil)
 (defvar *components* nil)
@@ -68,15 +68,15 @@
         n))))
 
 (defun call-url-actions-0 (x)
-  (& x
-     (let c (make-upcase-symbol x.)
-       (!? (component-action c)
-           (call-url-actions-0 (call-url-action ! (. c .x)))
-           (error "no action found for ~A" x)))));(tpl-error-404)))))
+  (when x
+    (let c (make-upcase-symbol x.)
+      (!? (component-action c)
+          (call-url-actions-0 (call-url-action ! (. c .x)))
+          (error "no action found for ~A" x)))));(tpl-error-404)))))
 
 (defun call-url-actions ()
   (= *components* nil)
-  (call-url-actions-0 (| (remove-empty-strings (request-path-components))
+  (call-url-actions-0 (| (remove-if #'empty-string? (request-path-components))
                          *home-components*)))
 
 (defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
