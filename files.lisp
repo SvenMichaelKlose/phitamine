@@ -26,5 +26,4 @@
  "phitamine/form.lisp"
  "phitamine/action.lisp"
  "phitamine/ports.lisp"
- "phitamine/phitamine.lisp"
- "config.lisp")
+ "phitamine/phitamine.lisp")
