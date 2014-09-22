@@ -2,7 +2,7 @@
 
 (defun phitamine ()
   (| (cons? *home-components*)
-     (error "*HOME-ACTION* must be a list of components"))
+     (error "*HOME-COMPONENTS* must be a list of components"))
   (= *current-language* (detect-language))
   (db-connect)
   (call-url-actions))
