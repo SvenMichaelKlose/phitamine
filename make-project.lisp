@@ -9,12 +9,12 @@
   (format out "RewriteCond %{REQUEST_FILENAME} !-d~%")
   (format out "RewriteRule .? ~A/index.php$1 [L]~%" script-path))
 
-(defun make-phitamine-project (name &key files script-path)
+(defun make-phitamine-project (name &key files script-path (dest-path "compiled"))
   (| (cons? files)
      (error "FILES is missing."))
   (| (string? script-path)
      (error "SCRIPT-PATH is missing."))
-  (unix-sh-mkdir "compiled")
+  (unix-sh-mkdir dest-path)
   (make-project name
                 (+ (read-file "phitamine/files.lisp")
                    (? (file-exists? "config.lisp")
@@ -22,6 +22,6 @@
                    files)
                 :transpiler  *php-transpiler*
                 :obfuscate?  nil
-                :emitter     [put-file "compiled/index.php" _])
-  (with-output-file out "compiled/.htaccess"
+                :emitter     [put-file (format nil "~A/index.php" dest-path) _])
+  (with-output-file out (format nil "~A/.htaccess" dest-path)
     (print-htaccess-rules out :script-path script-path)))
