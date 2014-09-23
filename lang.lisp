@@ -2,7 +2,7 @@
 
 (defvar *current-language* 'en)
 (defvar *fallback-language* 'en)
-(defvar *available-languages* 'en)
+(defvar *available-languages* '(en))
 
 (defmacro lang (&rest args)
   (? (== 2 (length args))
