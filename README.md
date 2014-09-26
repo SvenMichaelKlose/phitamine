@@ -226,11 +226,10 @@ it will always invoke your script 'example/index.php'.
 
 ### How phitamine deals with URLs and actions
 
-phitamine processes an URL directory by directory.  When a
-directoriy's name is associated with a handler (called `action')
-that handler is called, so it can configure the application or
-claim a part in the page generated in TPL-MAIN called in your
-'toplevel.lisp'.
+phitamine processes an URL directory by directory from left to
+right.  When a directoriy's name is associated with an action
+handler, that handler is called, so it can configure the
+application before something is output.
 
 If phitamine hits a component for which no action was defined,
 it issues the good old mood–shifting ERROR 404 PAGE NOT FOUND.
@@ -293,7 +292,7 @@ actions) and to call our template:
 Compile and run the script – Voilà!
 
 
-### Ports – many templates and one design
+### Ports – indepentend templates on a single page
 
 Usually, the action handlers claim a 'port' for which it
 generates HTML as soon as a template requests that port via the
