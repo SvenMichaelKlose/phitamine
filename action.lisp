@@ -61,7 +61,6 @@
 (defun call-url-action (action x)
   (with-temporary *action* action
     (let n (funcall .action. x)
-      (when-debug (print `(handler for ,action. returned ,n)))
       (?
         (number? n) (call-url-action-keep x n)
         (values? n) (call-url-action-replace n)
