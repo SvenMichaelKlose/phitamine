@@ -1,4 +1,4 @@
-;;;;; Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
+;;;;; Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
 
 (defvar *form-data* nil)
 
@@ -8,7 +8,7 @@
 (defun form-data ()
   (| *form-data*
      (& (has-form?)
-        (alet (hash-alist *_POST*)
+        (alet (phphash-alist *_POST*)
           (= *form-data* (pairlist (make-upcase-symbols (carlist !))
                                    (cdrlist !)))))))
 
@@ -22,7 +22,8 @@
   (& (has-form?)
      (!? (form-data)
          (dolist (i ! t)
-           (& (empty-string-or-nil? .i)
+           (& (| (not .i)
+                 (empty-string? .i))
               (return nil))))))
 
 (defun has-form-files? ()
