@@ -38,7 +38,7 @@
     (= remove (ensure-list !))
     (= components (remove-if [member _. remove] components)))
   (adolist ((ensure-alist update))
-    (aadjoin! .! (list !.) components :test #'eq :to-end? t))
+    (aadjoin! !. .! components :test #'eq :to-end? t))
   (append! components (ensure-alist add))
   (& (t? params)
      (= params (request-data)))
