@@ -19,16 +19,14 @@
 (defun set-action-group (action-name group)
   (= (cddr (assoc action-name *actions*)) group))
 
-(defun symbol-component (x)
-  (? (symbol? x)
-     (string-downcase (symbol-name x))
-     (string x)))
-
-(defun symbol-components (x)
-  (filter #'symbol-component (tree-list x)))
+(defun symbols-components (x)
+  (filter [? (symbol? _)
+             (string-downcase (symbol-name _))
+             (string _)]
+          (tree-list x)))
 
 (defun components-path (x)
-  (apply #'+ (pad (symbol-components x) "/")))
+  (apply #'+ (pad (symbols-components x) "/")))
 
 (defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
   (= components (? (t? components)
@@ -43,7 +41,12 @@
   (& (t? params)
      (= params (request-data)))
   (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params)
-                                                                                 (symbol-components (cdrlist params))))))
+                                                                                 (symbols-components (cdrlist params))))))
+
+(defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
+  (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
+             (action-url components :remove remove :update update :add add)))
+  (quit))
 
 (defun component-action (x)
   (assoc x *actions*))
@@ -77,12 +80,3 @@
   (= *components* nil)
   (call-url-actions-0 (| (remove-if #'empty-string? (request-path-components))
                          *home-components*)))
-
-(defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
-  (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
-             (action-url components :remove remove :update update :add add)))
-  (quit))
-
-(defun request-action ()
-  (& (has-request?)
-     (assoc-value 'action (request-data))))
