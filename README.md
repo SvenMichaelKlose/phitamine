@@ -17,11 +17,11 @@ phitamine gives you:
 
 ## What you need to know and have
 
-This manual does neither explain tré, Lisp, HTML or any other
-stuff you need to develop a web site.  You should also have
-installed your own Linux with Apache, PHP and MySQL installed to
-really get some fun out of life.  Last but not least you should
-be able to use the Unix shell.
+This manual neither explains tré/Lisp, HTML or any other stuff
+you need to develop a web site.  You should also have installed
+your own Linux with Apache, PHP and MySQL installed to really
+get some fun out of life.  Last but not least you should be able
+to use the Unix shell.
 
 
 ## How to use phitamine
