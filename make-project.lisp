@@ -16,6 +16,7 @@
     "phitamine/php/form.lisp"
     "phitamine/php/log.lisp"
     "phitamine/php/request.lisp"
+    "phitamine/php/phitamine.lisp"
     "phitamine/php/server.lisp"
     "phitamine/php/session.lisp"
     "phitamine/php/sql.lisp"
