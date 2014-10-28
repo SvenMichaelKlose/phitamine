@@ -9,18 +9,19 @@
      (warn "Target NODEJS is under construction."))
   `("environment/platforms/shared/url/path-pathlist.lisp"
     "environment/platforms/shared/url/url-assignments.lisp"
-    "environment/platforms/php/request-path.lisp"
     "phitamine/lang.lisp"
-    "phitamine/php/db-connect.lisp"
-    "phitamine/php/header.lisp"
-    "phitamine/php/form.lisp"
-    "phitamine/php/log.lisp"
-    "phitamine/php/request.lisp"
-    "phitamine/php/phitamine.lisp"
-    "phitamine/php/server.lisp"
-    "phitamine/php/session.lisp"
-    "phitamine/php/sql.lisp"
-    "phitamine/php/sql-date.lisp"
+    ,@(when (eq target 'php)
+        '("environment/platforms/php/request-path.lisp"
+          "phitamine/php/db-connect.lisp"
+          "phitamine/php/header.lisp"
+          "phitamine/php/form.lisp"
+          "phitamine/php/log.lisp"
+          "phitamine/php/request.lisp"
+          "phitamine/php/phitamine.lisp"
+          "phitamine/php/server.lisp"
+          "phitamine/php/session.lisp"
+          "phitamine/php/sql.lisp"
+          "phitamine/php/sql-date.lisp"))
     "phitamine/sql/utils-querystring.lisp"
     "phitamine/sql/create-table.lisp"
     "phitamine/sql/delete.lisp"
@@ -50,7 +51,8 @@
 (defun make-phitamine-project (name &key (target 'php) files script-path (dest-path "compiled") (filename nil))
   (| (cons? files)
      (error "FILES is missing."))
-  (| (string? script-path)
+  (? (& (eq target 'php)
+        (not (string? script-path)))
      (error "SCRIPT-PATH is missing."))
   (| (string? filename)
      (error "FILENAME is missing."))
