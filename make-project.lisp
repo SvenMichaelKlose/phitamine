@@ -47,11 +47,13 @@
   (format out "RewriteCond %{REQUEST_FILENAME} !-d~%")
   (format out "RewriteRule .? ~A/index.php$1 [L]~%" script-path))
 
-(defun make-phitamine-project (name &key (target 'php) files script-path (dest-path "compiled"))
+(defun make-phitamine-project (name &key (target 'php) files script-path (dest-path "compiled") (filename nil))
   (| (cons? files)
      (error "FILES is missing."))
   (| (string? script-path)
      (error "SCRIPT-PATH is missing."))
+  (| (string? filename)
+     (error "FILENAME is missing."))
   (unix-sh-mkdir dest-path)
   (make-project name
                 (+ (phitamine-files target)
@@ -63,6 +65,6 @@
                                'nodejs  (aprog1 (copy-transpiler *js-transpiler*)
                                           (= (transpiler-configuration ! 'environment) 'nodejs)))
                 :obfuscate?  nil
-                :emitter     [put-file (format nil "~A/index.php" dest-path) _])
+                :emitter     [put-file (format nil "~A/~A" dest-path filename) _])
   (with-output-file out (format nil "~A/.htaccess" dest-path)
     (print-htaccess-rules out :script-path script-path)))
