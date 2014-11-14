@@ -22,6 +22,8 @@
           "phitamine/php/session.lisp"
           "phitamine/php/sql.lisp"
           "phitamine/php/sql-date.lisp"))
+    ,@(when (eq target 'nodejs)
+        '("phitamine/growroom/nodejs/server.lisp"))
     "phitamine/sql/utils-querystring.lisp"
     "phitamine/sql/create-table.lisp"
     "phitamine/sql/delete.lisp"
