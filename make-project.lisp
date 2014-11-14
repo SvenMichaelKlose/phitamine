@@ -72,5 +72,6 @@
                                           (= (transpiler-configuration ! 'environment) 'nodejs)))
                 :obfuscate?  nil
                 :emitter     [put-file (format nil "~A/~A" dest-path filename) _])
-  (with-output-file out (format nil "~A/.htaccess" dest-path)
-    (print-htaccess-rules out :script-path script-path)))
+  (when (eq 'php target)
+    (with-output-file out (format nil "~A/.htaccess" dest-path)
+      (print-htaccess-rules out :script-path script-path))))
