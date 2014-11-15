@@ -10,20 +10,21 @@
   `("environment/platforms/shared/url/path-pathlist.lisp"
     "environment/platforms/shared/url/url-assignments.lisp"
     "phitamine/lang.lisp"
-    ,@(when (eq target 'php)
-        '("environment/platforms/php/request-path.lisp"
-          "phitamine/php/db-connect.lisp"
-          "phitamine/php/header.lisp"
-          "phitamine/php/form.lisp"
-          "phitamine/php/log.lisp"
-          "phitamine/php/request.lisp"
-          "phitamine/php/phitamine.lisp"
-          "phitamine/php/server.lisp"
-          "phitamine/php/session.lisp"
-          "phitamine/php/sql.lisp"
-          "phitamine/php/sql-date.lisp"))
-    ,@(when (eq target 'nodejs)
-        '("phitamine/growroom/nodejs/server.lisp"))
+    ,@(& (eq target 'php)
+         '("environment/platforms/php/request-path.lisp"
+           "phitamine/php/db-connect.lisp"
+           "phitamine/php/header.lisp"
+           "phitamine/php/form.lisp"
+           "phitamine/php/log.lisp"
+           "phitamine/php/request.lisp"
+           "phitamine/php/phitamine.lisp"
+           "phitamine/php/server.lisp"
+           "phitamine/php/session.lisp"
+           "phitamine/php/sql.lisp"
+           "phitamine/php/sql-date.lisp"))
+    ,@(& (eq target 'nodejs)
+         '("phitamine/growroom/nodejs/cookie.lisp"
+           "phitamine/growroom/nodejs/server.lisp"))
     "phitamine/sql/utils-querystring.lisp"
     "phitamine/sql/create-table.lisp"
     "phitamine/sql/delete.lisp"

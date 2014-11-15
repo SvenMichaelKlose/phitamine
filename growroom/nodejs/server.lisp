@@ -1,27 +1,22 @@
 ;;;; phitamine – Copyright (c) 2014 Sven Michael Klose <pixel@hugbox.org>
 
 (defvar *user-request-handler* nil)
-(defvar *cookies* nil)
 
 (defmacro with-standard-output-string (&rest body)
   `(with-string-stream s
      (with-temporary *standard-output* s
        ,@body)))
 
-(defun harvest-cookies (headers)
-  (= *cookies* (remove-if-not [string== "Cookie" _]
-                              (hash-alist headers))))
-
 (defun log-headers (headers)
   (dolist (i (hashkeys headers))
     (console.log (+ "Header: " i ": " (href headers i)))))
 
 (defun phitamine-request-handler (req res)
-  (console.log (+ "HTTP request from " (req.socket.address).address))
-  (console.log (+ "HTTP request URL " req.url))
-  (console.log (+ "Client HTTP version " req.http-version))
+  (console.log (+ "HTTP request " req.http-version
+                  " from " (req.socket.address).address
+                  ": " req.url))
   (log-headers req.headers)
-  (harvest-cookies req.headers)
+  (ensure-cookie req.headers res)
   (res.write (with-standard-output-string
                (funcall *user-request-handler*)))
   (res.end))
