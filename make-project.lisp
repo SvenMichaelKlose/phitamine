@@ -9,6 +9,7 @@
      (warn "Target NODEJS is under construction."))
   `("environment/platforms/shared/url/path-pathlist.lisp"
     "environment/platforms/shared/url/url-assignments.lisp"
+    "environment/platforms/shared/uuid.lisp"
     "phitamine/lang.lisp"
     ,@(& (eq target 'php)
          '("environment/platforms/php/request-path.lisp"
