@@ -35,7 +35,7 @@
   (%%%href (%%%href *_FILES* (symbol-component name))
            (? (eq 'tmp-name field)
               "tmp_name"
-              (string-downcase (symbol-name field)))))
+              (downcase (symbol-name field)))))
 
 (defun form-file-field (name index field)
   (%%%href (form-file-fields name field) index))

@@ -4,7 +4,7 @@
   (zero? (length x)))
 
 (defun make-upcase-symbol (x)
-  (make-symbol (string-upcase x)))
+  (make-symbol (upcase x)))
 
 (define-filter make-upcase-symbols #'make-upcase-symbol)
 

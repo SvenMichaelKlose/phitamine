@@ -21,7 +21,7 @@
 
 (defun symbols-components (x)
   (filter [? (symbol? _)
-             (string-downcase (symbol-name _))
+             (downcase (symbol-name _))
              (string _)]
           (tree-list x)))
 

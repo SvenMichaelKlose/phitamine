@@ -1,8 +1,8 @@
-;;;;; phitamine – Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
+;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
 
 (defmacro define-sql-table (name singular-name &rest fields)
   (add-sql-table-definition name fields)
-  (let table-name (string-downcase (symbol-name name))
+  (let table-name (downcase (symbol-name name))
     `(progn
        (defun ,($ 'find- name) (&optional (fields nil) &key (limit nil) (offset nil) (order-by nil) (direction nil))
          (let column-names (make-upcase-symbols (*db*.column-names (+ *db-table-prefix* ,table-name)))

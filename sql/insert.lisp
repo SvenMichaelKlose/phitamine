@@ -9,7 +9,7 @@
 	    (concat-stringtree
 		    " ("
 	        (comma-separated-list (filter [? (symbol? _)
-                                             (string-downcase (symbol-name _))
+                                             (downcase (symbol-name _))
                                              _]
                                           (carlist fields)))
 	        ") VALUES ("

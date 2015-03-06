@@ -3,7 +3,7 @@
 (defvar *cookie* nil)
 
 (defun harvest-cookies (headers)
-  (= *cookie* (cdar (remove-if-not [string== "cookie" (string-downcase _.)]
+  (= *cookie* (cdar (remove-if-not [string== "cookie" (downcase _.)]
                                    (hash-alist headers)))))
 
 (defun set-cookie (response)
