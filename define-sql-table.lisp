@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
 
 (defmacro define-sql-table (name singular-name &rest fields)
   (add-sql-table-definition name fields)
@@ -6,13 +6,13 @@
     `(progn
        (defun ,($ 'find- name) (&optional (fields nil) &key (limit nil) (offset nil) (order-by nil) (direction nil))
          (let column-names (make-upcase-symbols (*db*.column-names (+ *db-table-prefix* ,table-name)))
-           (mapcar [mapcar #'cons column-names _]
-                   (*db*.exec (sql-clause-select :table      (+ *db-table-prefix* ,table-name)
-                                                 :where      (ensure-alist fields)
-                                                 :limit      limit
-                                                 :offset     offset
-                                                 :order-by   order-by
-                                                 :direction  direction)))))
+           (@ [@ #'cons column-names _]
+              (*db*.exec (sql-clause-select :table      (+ *db-table-prefix* ,table-name)
+                                            :where      (ensure-alist fields)
+                                            :limit      limit
+                                            :offset     offset
+                                            :order-by   order-by
+                                            :direction  direction)))))
        (defun ,($ 'find- singular-name) (&optional (fields nil))
          (car (funcall #',($ 'find- name) fields)))
        (defun ,($ 'insert- singular-name) (fields)
@@ -24,7 +24,7 @@
                                          :fields  (aremove 'id !)
                                          :where   (list (assoc 'id !))))))
        (defun ,($ 'update- name) (records)
-         (filter #',($ 'update- singular-name) records))
+         (@ #',($ 'update- singular-name) records))
        (defun ,($ 'delete- name) (fields)
          (*db*.exec (sql-clause-delete :table  (+ *db-table-prefix* ,table-name)
                                        :where  (ensure-alist fields))))

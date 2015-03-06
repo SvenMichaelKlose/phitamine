@@ -1,9 +1,10 @@
-;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012,2015 Sven Michael Klose <pixel@copei.de>
 
 (defun lhtml-option (value name selected)
-  `(option :value ,value ,@(when (string== selected value)
-                             '(:selected "selected"))
-       ,name))
+  `(option :value ,value
+           ,@(& (string== selected value)
+                '(:selected "selected"))
+     ,name))
 
 (defun lhtml-options (x selected)
-  (filter [lhtml-option _. ._ selected] x))
+  (@ [lhtml-option _. ._ selected] x))

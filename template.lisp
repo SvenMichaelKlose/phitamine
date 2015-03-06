@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
 
 (defvar *template-parameters* nil)
 (defvar *currently-processed-templates* nil)
@@ -9,13 +9,16 @@
   (princ "<br>")
   (error "template parameter ~A not found." (symbol-name name)))
 
+(defun template-parameter (x)
+  (assoc-value x *template-parameters* :test #'eq))
+
 (defun param (name &key (required? nil))
-  (!?
-    (assoc name *template-parameters* :test #'eq) .!
-    required?      (param-error name)))
+  (| (template-parameter name)
+     (? required?
+        (param-error name))))
 
 (defun lml2xml-list (x)
-  (apply #'string-concat (filter #'lml2xml x)))
+  (apply #'string-concat (@ #'lml2xml x)))
 
 (defmacro with-template (name params &body body)
   `(progn
@@ -38,6 +41,6 @@
 (defun template-list (template records)
   (when records
     (let index 0
-      (apply #'string-concat (filter [with-template-parameter 'index (++! index)
-                                       (funcall template _)]
-                                     records)))))
+      (apply #'string-concat (@ [with-template-parameter 'index (++! index)
+                                  (funcall template _)]
+                                records)))))

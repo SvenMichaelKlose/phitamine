@@ -1,4 +1,4 @@
-;;;; phitamine – Copyright (c) 2014 Sven Michael Klose <pixel@hugbox.org>
+; phitamine – Copyright (c) 2014–2015 Sven Michael Klose <pixel@hugbox.org>
 
 (defvar *user-request-handler* nil)
 
@@ -8,7 +8,7 @@
        ,@body)))
 
 (defun log-headers (headers)
-  (dolist (i (hashkeys headers))
+  (@ (i (hashkeys headers))
     (console.log (+ "Header: " i ": " (href headers i)))))
 
 (defun phitamine-request-handler (req res)

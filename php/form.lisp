@@ -1,4 +1,4 @@
-;;;;; Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
+; Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
 
 (defvar *form-data* nil)
 
@@ -21,7 +21,7 @@
 (defun form-complete? ()
   (& (has-form?)
      (!? (form-data)
-         (dolist (i ! t)
+         (@ (i ! t)
            (& (| (not .i)
                  (empty-string? .i))
               (return nil))))))
@@ -51,5 +51,5 @@
      (with-queue q
        (dotimes (i (form-num-files name) (queue-list q))
          (awhen (form-file-uploaded? name i)
-           (enqueue q (filter [. _ (form-file-field name i _)]
-                              *form-file-fields*)))))))
+           (enqueue q (@ [. _ (form-file-field name i _)]
+                         *form-file-fields*)))))))

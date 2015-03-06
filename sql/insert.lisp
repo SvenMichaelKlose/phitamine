@@ -1,4 +1,4 @@
-;;;;; Caroshi – Copyright (c) 2009–2011,2013–2014 Sven Michael Klose <pixel@copei.de>
+; Caroshi – Copyright (c) 2009–2011,2013–2015 Sven Michael Klose <pixel@copei.de>
 
 (define-filter literal-strings #'literal-string)
 
@@ -8,10 +8,10 @@
 	 (? fields
 	    (concat-stringtree
 		    " ("
-	        (comma-separated-list (filter [? (symbol? _)
-                                             (downcase (symbol-name _))
-                                             _]
-                                          (carlist fields)))
+	        (comma-separated-list (@ [? (symbol? _)
+                                        (downcase (symbol-name _))
+                                        _]
+                                     (carlist fields)))
 	        ") VALUES ("
 	        (comma-separated-list (literal-strings (cdrlist fields)))
      		")")

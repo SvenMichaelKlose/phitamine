@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
 
 (defvar *home-components* nil)
 (defvar *components* nil)
@@ -20,10 +20,10 @@
   (= (cddr (assoc action-name *actions*)) group))
 
 (defun symbols-components (x)
-  (filter [? (symbol? _)
-             (downcase (symbol-name _))
-             (string _)]
-          (tree-list x)))
+  (@ [? (symbol? _)
+        (downcase (symbol-name _))
+        (string _)]
+     (tree-list x)))
 
 (defun components-path (x)
   (apply #'+ (pad (symbols-components x) "/")))

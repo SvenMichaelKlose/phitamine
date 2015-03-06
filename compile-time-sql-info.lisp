@@ -1,4 +1,4 @@
-;;;;; phitamine – Copyright (c) 2012–2013 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2013,2015 Sven Michael Klose <pixel@copei.de>
 
 (defvar *sql-table-definitions* name)
 
@@ -13,5 +13,5 @@
 
 (defun add-sql-table-definition (name fields)
   (acons! name (make-sql-table :name name
-                               :fields (filter [. _. (make-sql-field :name _. :sql-type ._. :type .._.)] fields))
+                               :fields (@ [. _. (make-sql-field :name _. :sql-type ._. :type .._.)] fields))
           *sql-table-definitions*))
