@@ -32,7 +32,7 @@
   (print-definition `(define-template ,name :path ,path))
   `(defun ,name (&optional (params nil))
      (with-template ',name params
-       (lml2xml-list ,(list 'backquote (dot-expand (read-file-all path)))))))
+       (lml2xml-list ,(list 'backquote (dot-expand (read-file path)))))))
 
 (defmacro with-template-parameter (name value &body body)
   `(with-temporary *template-parameters* (acons ,name ,value *template-parameters*)
