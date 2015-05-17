@@ -1,6 +1,6 @@
 ; phitamine – Copyright (c) 2012–2013,2015 Sven Michael Klose <pixel@copei.de>
 
-(defvar *sql-table-definitions* name)
+(defvar *sql-table-definitions* nil)
 
 (defstruct sql-table
   name
