@@ -1,17 +1,17 @@
-;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
 
 (load "phitamine/compile-time-sql-info.lisp")
 
 (defun phitamine-files (target)
-  (| (in? target 'php 'nodejs)
+  (| (in? target :php :nodejs)
      (error "Expecting TARGET to one of PHP or NODEJS. Got ~A." target))
-  (& (eq target 'nodejs)
+  (& (eq target :nodejs)
      (warn "Target NODEJS is under construction."))
   `("environment/platforms/shared/url/path-pathlist.lisp"
     "environment/platforms/shared/url/url-assignments.lisp"
     "environment/platforms/shared/uuid.lisp"
     "phitamine/lang.lisp"
-    ,@(& (eq target 'php)
+    ,@(& (eq target :php)
          '("environment/platforms/php/request-path.lisp"
            "phitamine/php/db-connect.lisp"
            "phitamine/php/header.lisp"
@@ -23,7 +23,7 @@
            "phitamine/php/session.lisp"
            "phitamine/php/sql.lisp"
            "phitamine/php/sql-date.lisp"))
-    ,@(& (eq target 'nodejs)
+    ,@(& (eq target :nodejs)
          '("phitamine/growroom/nodejs/cookie.lisp"
            "phitamine/growroom/nodejs/server.lisp"))
     "phitamine/sql/utils-querystring.lisp"
@@ -54,14 +54,14 @@
 
 (defun make-phitamine-transpiler (target transpiler)
   (case target
-    'php     (| transpiler
+    :php     (| transpiler
                 *php-transpiler*)
-    'nodejs  (aprog1 (copy-transpiler (| transpiler
+    :nodejs  (aprog1 (copy-transpiler (| transpiler
                                          *js-transpiler*))
-               (= (transpiler-configuration ! :platform) 'nodejs)
+               (= (transpiler-configuration ! :platform) :nodejs)
                (= (transpiler-configuration ! :nodejs-requirements) '("fs" "http" "https" "querystring" "crypto")))))
 
-(defun make-phitamine-project (name &key (target 'php)
+(defun make-phitamine-project (name &key (target :php)
                                          files
                                          script-path
                                          (dest-path "compiled")
@@ -70,7 +70,7 @@
   (format t "; Making phitamine project ~A for target ~A.~%" name target)
   (| (cons? files)
      (error "FILES is missing."))
-  (? (& (eq target 'php)
+  (? (& (eq target :php)
         (not (string? script-path)))
      (error "SCRIPT-PATH is missing but it's required to make .htaccess rules."))
   (| (string? filename)
@@ -85,6 +85,6 @@
                 :transpiler  (make-phitamine-transpiler target transpiler)
                 :obfuscate?  nil
                 :emitter     [put-file (format nil "~A/~A" dest-path filename) _])
-  (when (eq 'php target)
+  (when (eq :php target)
     (with-output-file out (format nil "~A/.htaccess" dest-path)
       (print-htaccess-rules out :script-path script-path))))
