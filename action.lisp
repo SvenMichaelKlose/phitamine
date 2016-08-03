@@ -10,7 +10,7 @@
      (error "action ~A is already defined" component))
   (acons! component (. handler group) *actions*))
 
-(defmacro define-action (component &key (group 'default) (handler nil))
+(defmacro define-action (component &key (group default) (handler nil))
   (print-definition `(define-action ,component :handler ,handler :group ,group))
   (| (symbol? group)
      (error "group is not a symbol"))
