@@ -1,4 +1,4 @@
-;;;;; Caroshi – Copyright (c) 2008–2012 Sven Michael Klose <pixel@copei.de>
+; Caroshi – Copyright (c) 2008–2012,2016 Sven Michael Klose <pixel@copei.de>
 
 (dont-obfuscate 
     mysql_connect
@@ -8,9 +8,9 @@
     mysql_drop_db
     mysql_close)
 
-(defclass php-sql ()
-  (= _name *db-name*)
-  (= _conn (mysql_pconnect *db-host* *db-user* *db-password*))
+(defclass php-sql (&key name host user password)
+  (= _name name)
+  (= _conn (mysql_pconnect host user password))
   (= _column-names (make-hash-table))
   (mysql_set_charset "utf8")
   (mysql_select_db _name _conn)
