@@ -103,7 +103,7 @@ But
 will just break with an error message.  Inside an alement you
 can pack more elements or just text nodes:
 
-    (p "Go " (a :href "/" "home").)
+    (p "Go " (a :href "/" "home"))
 
 will give you
 
@@ -159,7 +159,7 @@ QUASIQUOTE to insert values.  This is how 'templates/main.lisp'
 should look like:
 
     (html
-      (head "Our first dynamic template")
+      (head (title "Our first dynamic template"))
       (body
         "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
 
@@ -169,7 +169,7 @@ Also change 'toplevel.lisp' to set the X parameter:
 
 Compile the script and run it in your browser.  You should get
 
-    Parameter X has the value 42.
+    Parameter X has the value "42".
 
 
 ### Form data
@@ -179,7 +179,7 @@ first, simple form will show that. Here's the code we put in
 'templates/main.lisp' to replace its old code:
 
     (html
-      (head "Our first phitamine form")
+      (head (title "Our first phitamine form"))
       (body
         (form :method "post" :action ""
           (input    :name "email" :type "text" :value ,(form-value 'email))
@@ -238,7 +238,7 @@ Let's extend our already working page with internationalization.
 We enable our visitors to select the language of our page.
 
     (html
-      (head "Our first phitamine form")
+      (head (title "Our first phitamine form"))
       (body
         (a :href (action-url :update '(lang en)) "English") " "
         (a :href (action-url :update '(lang de)) "Deutsch") " "
@@ -266,12 +266,12 @@ should always keep things as easy as possible:
 Then we define the handler:
 
     (defun language (x)
-      (= *current-language* (make-symbol .x.))
+      (= *current-language* (make-symbol (upcase .x.)))
       2)
 
 When this handler is called, variable X points to the URL
 component that caused the action to be invoked.  If the visitor
-picked English it contains the list '(lang en).  We simply
+picked English it contains the list '("language" "en").  We simply
 convert the country code into a symbol and set it as the current
 language.  The returned 2 tells phitamine that the two components
 should remain in the URL.  phitamine then continues with the
@@ -281,7 +281,7 @@ In case you wonder why the page is already in your preferred
 language: phitamine detects the language set in your browser and
 sets the current language accordingly.  If your language isn't
 available, the LANG macro in the template will fall back to the
-*default-language* which is English by default.
+*DEFAULT-LANGUAGE* which is English by default.
 
 All left to do is to invoke phitamine (which will process the
 actions) and to call our template:
@@ -358,7 +358,7 @@ Your new 'toplevel.lisp' should now look like this:
     (define-action language)
 
     (defun language (x)
-      (= *current-language* (make-symbol .x.))
+      (= *current-language* (make-symbol (upcase .x.)))
       2)
 
     (define-action home)
