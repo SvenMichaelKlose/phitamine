@@ -7,7 +7,8 @@
      (error "Expecting TARGET to one of PHP or NODEJS. Got ~A." target))
   (& (eq target :nodejs)
      (warn "Target NODEJS is under construction."))
-  `("environment/platforms/shared/url/path-pathlist.lisp"
+  `("environment/stage3/print.lisp" ; SYMBOL-CHAR-NEEDS-ESCAPING? doesn't get imported with the PHP backend for some reason.
+    "environment/platforms/shared/url/path-pathlist.lisp"
     "environment/platforms/shared/url/url-assignments.lisp"
     "environment/platforms/shared/uuid.lisp"
     "phitamine/lang.lisp"
