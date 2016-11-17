@@ -1,4 +1,4 @@
-; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2016 Sven Michael Klose <pixel@copei.de>
 
 (defvar *home-components* nil)
 (defvar *components* nil)
@@ -78,5 +78,5 @@
 
 (defun call-url-actions ()
   (= *components* nil)
-  (call-url-actions-0 (| (remove-if #'empty-string? (request-path-components))
+  (call-url-actions-0 (| (request-path-components)
                          *home-components*)))
