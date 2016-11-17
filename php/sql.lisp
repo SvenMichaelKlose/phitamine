@@ -1,19 +1,13 @@
 ; Caroshi – Copyright (c) 2008–2012,2016 Sven Michael Klose <pixel@copei.de>
 
-(dont-obfuscate 
-    mysql_connect
-    mysql_set_charset
-    mysql_select_db
-    mysql_create_db
-    mysql_drop_db
-    mysql_close)
+(dont-obfuscate set_charset select_db close)
 
 (defclass php-sql (&key name host user password)
   (= _name name)
-  (= _conn (mysql_pconnect host user password))
+  (= _conn (new mysqli host user password))
   (= _column-names (make-hash-table))
-  (mysql_set_charset "utf8")
-  (mysql_select_db _name _conn)
+  (_conn.set_charset "utf8")
+  (_conn.select_db _name)
   this)
 
 (defmember php-sql
@@ -22,41 +16,41 @@
     _column-names)
 
 (defmethod php-sql last-insert-row-i-d ()
-  (mysql_insert_id))
+  _conn.insert_id)
 
 (defmethod php-sql last-error ()
-  (let err (mysql_error)
-    (unless (empty-string? err)
-      err)))
+  (alet _conn.error
+    (unless (empty-string? !)
+      !)))
 
 (defmethod php-sql last-error-string ()
-  (mysql_error))
+  _conn.error)
 
 (defmethod php-sql _handle-error (method-name)
   (when (last-error)
-    (error (+ "SQL " method-name ": " (last-error-string)))))
+    (error (+ "Error: PHP-SQL." (upcase method-name) ": " (last-error-string)))))
 
 (dont-obfuscate is_bool)
 
-(defmethod php-sql _log (statement))
-;  (log (+ "SQL: "
-;          (? (< 256 (length statement))
-;             (subseq statement (- (length statement) 200))
-;             statement))))
+(defmethod php-sql _log (statement)
+  (log (+ "SQL: "
+          (? (< 256 (length statement))
+             (subseq statement (- (length statement) 200))
+             statement))))
 
 (defmethod php-sql exec (statement)
   (_log statement)
-  (with (res (mysql_query statement _conn)
+  (with (res (_conn.query statement)
          ret (make-queue))
 	(_handle-error "exec")
     (unless (is_bool res)
-      (awhile (mysql_fetch_row res)
+      (awhile (res.fetch_row)
               (queue-list ret)
         (enqueue ret (array-list !))))))
 
 (defmethod php-sql exec-simple (statement)
   (_log statement)
-  (mysql_query statement _conn))
+  (_conn.query statement))
 
 (defmethod php-sql column-names (table-name)
   (| (href _column-names table-name)
@@ -81,19 +75,19 @@
   (exec-simple "ROLLBACK"))
 
 (defmethod php-sql close ()
-  (mysql_close)
+  (_conn.close)
   (clr _conn))
 
-(defmethod php-sql create-db (name)
-  (mysql_create_db name)
-  (= _name name))
+;(defmethod php-sql create-db (name)
+;  (mysql_create_db name)
+;  (= _name name))
 
-(defmethod php-sql remove ()
-  (close)
-  (reset-sql-iface-cache)
-  (mysql_drop_db _name))
+;(defmethod php-sql remove ()
+;  (close)
+;  (reset-sql-iface-cache)
+;  (mysql_drop_db _name))
 
 (defmethod php-sql escape (x)
-  (mysql_real_escape_string x _conn))
+  (mysqli_real_escape_string x))
 
 (finalize-class php-sql)
