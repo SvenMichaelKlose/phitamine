@@ -87,5 +87,5 @@
                 :obfuscate?  nil
                 :emitter     [put-file (format nil "~A/~A" dest-path filename) _])
   (when (eq :php target)
-    (with-output-file out (format nil "~A/.htaccess" dest-path)
+    (with-output-file out (format nil "~A/htaccess.example" dest-path)
       (print-htaccess-rules out :script-path script-path))))
