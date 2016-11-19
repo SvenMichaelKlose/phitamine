@@ -32,7 +32,7 @@
 (defvar *form-file-fields* '(name tmp-name error size type))
 
 (defun form-file-fields (name field)
-  (%%%href (%%%href *_FILES* (symbol-component name))
+  (%%%href (%%%href *_FILES* (downcase (symbol-name name)))
            (? (eq 'tmp-name field)
               "tmp_name"
               (downcase (symbol-name field)))))
