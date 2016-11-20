@@ -1,4 +1,4 @@
-; phitamine – Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
+; phitamine – Copyright (c) 2012–2016 Sven Michael Klose <pixel@copei.de>
 
 (load "phitamine/compile-time-sql-info.lisp")
 
@@ -39,6 +39,7 @@
     "phitamine/detect-language.lisp"
     "phitamine/db.lisp"
     "phitamine/define-sql-table.lisp"
+    "phitamine/html.lisp"
     "phitamine/lhtml.lisp"
     "phitamine/template.lisp"
     "phitamine/form.lisp"
