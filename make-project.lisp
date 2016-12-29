@@ -9,7 +9,7 @@
      (warn "Target NODEJS is under construction."))
   `("environment/stage3/print.lisp" ; SYMBOL-CHAR-NEEDS-ESCAPING? doesn't get imported with the PHP backend for some reason.
     "environment/platforms/shared/url/path-pathlist.lisp"
-    "environment/platforms/shared/url/url-assignments.lisp"
+    "environment/platforms/shared/url/alist-url.lisp"
     "environment/platforms/shared/uuid.lisp"
     "phitamine/lang.lisp"
     ,@(& (eq target :php)
