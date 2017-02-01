@@ -1,5 +1,3 @@
-; phitamine – Copyright (c) 2012–2016 Sven Michael Klose <pixel@copei.de>
-
 (defvar *home-components* nil)
 (defvar *components* nil)
 (defvar *actions* nil)
@@ -23,7 +21,7 @@
   (@ [? (symbol? _)
         (downcase (symbol-name _))
         (string _)]
-     (tree-list x)))
+     (apply #'append (@ #'ensure-list x))))
 
 (defun components-path (x)
   (apply #'+ (pad (symbols-components x) "/")))
