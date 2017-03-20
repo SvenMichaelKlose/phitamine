@@ -1,24 +1,22 @@
-; Copyright (c) 2012–2015 Sven Michael Klose <pixel@copei.de>
+(var *form-data* nil)
 
-(defvar *form-data* nil)
-
-(defun has-form? ()
+(fn has-form? ()
   (& *_POST* (not (empty? *_POST*))))
 
-(defun form-data ()
+(fn form-data ()
   (| *form-data*
      (& (has-form?)
-        (alet (phphash-alist *_POST*)
+        (alet (properties-alist *_POST*)
           (= *form-data* (pairlist (make-upcase-symbols (carlist !))
                                    (cdrlist !)))))))
 
-(defun form-value (x)
+(fn form-value (x)
   (assoc-value x (form-data)))
 
-(defun form-string (x)
+(fn form-string (x)
   (| (assoc-value x (form-data)) ""))
 
-(defun form-complete? ()
+(fn form-complete? ()
   (& (has-form?)
      (!? (form-data)
          (@ (i ! t)
@@ -26,27 +24,27 @@
                  (empty-string? .i))
               (return nil))))))
 
-(defun has-form-files? ()
+(fn has-form-files? ()
   (& *_FILES* (not (empty? *_FILES*))))
 
-(defvar *form-file-fields* '(name tmp-name error size type))
+(var *form-file-fields* '(name tmp-name error size type))
 
-(defun form-file-fields (name field)
+(fn form-file-fields (name field)
   (%%%href (%%%href *_FILES* (downcase (symbol-name name)))
            (? (eq 'tmp-name field)
               "tmp_name"
               (downcase (symbol-name field)))))
 
-(defun form-file-field (name index field)
+(fn form-file-field (name index field)
   (%%%href (form-file-fields name field) index))
 
-(defun form-num-files (name)
+(fn form-num-files (name)
   (length (form-file-fields name 'name)))
 
-(defun form-file-uploaded? (name index)
+(fn form-file-uploaded? (name index)
   (form-file-field name index 'tmp-name))
 
-(defun form-files (name)
+(fn form-files (name)
   (& (has-form-files?)
      (with-queue q
        (dotimes (i (form-num-files name) (queue-list q))
