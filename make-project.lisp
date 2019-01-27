@@ -1,74 +1,73 @@
-; phitamine – Copyright (c) 2012–2016 Sven Michael Klose <pixel@copei.de>
+(load "tre_modules/phitamine/compile-time-sql-info.lisp")
 
-(load "phitamine/compile-time-sql-info.lisp")
-
-(defun phitamine-files (target)
+(fn phitamine-files (target)
   (| (in? target :php :nodejs)
      (error "Expecting TARGET to one of PHP or NODEJS. Got ~A." target))
   (& (eq target :nodejs)
      (warn "Target NODEJS is under construction."))
-  `("environment/stage3/print.lisp" ; SYMBOL-CHAR-NEEDS-ESCAPING? doesn't get imported with the PHP backend for some reason.
-    "environment/platforms/shared/url/path-pathlist.lisp"
-    "environment/platforms/shared/url/alist-url.lisp"
-    "environment/platforms/shared/uuid.lisp"
-    "phitamine/lang.lisp"
+  `("tre_modules/shared/uuid.lisp"
     ,@(& (eq target :php)
-         '("environment/platforms/php/request-path.lisp"
-           "phitamine/php/db-connect.lisp"
-           "phitamine/php/header.lisp"
-           "phitamine/php/form.lisp"
-           "phitamine/php/log.lisp"
-           "phitamine/php/request.lisp"
-           "phitamine/php/phitamine.lisp"
-           "phitamine/php/server.lisp"
-           "phitamine/php/session.lisp"
-           "phitamine/php/sql.lisp"
-           "phitamine/php/sql-date.lisp"))
-    ,@(& (eq target :nodejs)
-         '("phitamine/growroom/nodejs/cookie.lisp"
-           "phitamine/growroom/nodejs/server.lisp"))
-    "phitamine/sql/utils-querystring.lisp"
-    "phitamine/sql/create-table.lisp"
-    "phitamine/sql/delete.lisp"
-    "phitamine/sql/insert.lisp"
-    "phitamine/sql/select.lisp"
-    "phitamine/sql/update.lisp"
-    "phitamine/terpri.lisp"
-    "phitamine/utils.lisp"
-    "phitamine/request.lisp"
-    "phitamine/detect-language.lisp"
-    "phitamine/db.lisp"
-    "phitamine/define-sql-table.lisp"
-    "phitamine/html.lisp"
-    "phitamine/lhtml.lisp"
-    "phitamine/template.lisp"
-    "phitamine/form.lisp"
-    "phitamine/action.lisp"
-    "phitamine/ports.lisp"
-    "phitamine/phitamine.lisp"))
+         '("tre_modules/php/request-path.lisp"))
+    ,@(list+ "tre_modules/phitamine/"
+             `("lang.lisp"
+               ,@(& (eq target :php)
+                    (list+ "php/"
+                           '("db-connect.lisp"
+                             "header.lisp"
+                             "form.lisp"
+                             "log.lisp"
+                             "request.lisp"
+                             "phitamine.lisp"
+                             "server.lisp"
+                             "session.lisp"
+                             "sql.lisp"
+                             "sql-date.lisp")))
+               ,@(& (eq target :nodejs)
+                    '("growroom/nodejs/cookie.lisp"
+                      "growroom/nodejs/server.lisp"))
+               ,@(list+ "sql/"
+                        `("utils-querystring.lisp"
+                          "create-table.lisp"
+                          "delete.lisp"
+                          "insert.lisp"
+                          "select.lisp"
+                          "update.lisp"))
+               "terpri.lisp"
+               "utils.lisp"
+               "request.lisp"
+               "detect-language.lisp"
+               "db.lisp"
+               "define-sql-table.lisp"
+               "html.lisp"
+               "lhtml.lisp"
+               "template.lisp"
+               "form.lisp"
+               "action.lisp"
+               "ports.lisp"
+               "phitamine.lisp"))))
 
-(defun print-htaccess-rules (out &key script-path)
+(fn print-htaccess-rules (out &key script-path)
   (format out "Options -indexes~%")
   (format out "RewriteEngine on~%")
   (format out "RewriteCond %{REQUEST_FILENAME} !-f~%")
   (format out "RewriteCond %{REQUEST_FILENAME} !-d~%")
   (format out "RewriteRule .? ~A/index.php$1 [L]~%" script-path))
 
-(defun make-phitamine-transpiler (target transpiler)
+(fn make-phitamine-transpiler (target transpiler)
   (case target
     :php     (| transpiler
                 *php-transpiler*)
     :nodejs  (aprog1 (copy-transpiler (| transpiler
                                          *js-transpiler*))
                (= (transpiler-configuration ! :platform) :nodejs)
-               (= (transpiler-configuration ! :nodejs-requirements) '("fs" "http" "https" "querystring" "crypto")))))
+               (= (transpiler-configuration ! :nodejs-requirements) (merge (transpiler-configuration ! :nodejs-requirements) '("fs" "http" "https" "querystring" "crypto"))))))
 
-(defun make-phitamine-project (name &key (target :php)
-                                         files
-                                         script-path
-                                         (dest-path "compiled")
-                                         (filename nil)
-                                         (transpiler nil))
+(fn make-phitamine-project (name &key (target :php)
+                                      files
+                                      script-path
+                                      (dest-path "compiled")
+                                      (filename nil)
+                                      (transpiler nil))
   (format t "; Making phitamine project ~A for target ~A.~%" name target)
   (| (cons? files)
      (error "FILES is missing."))
