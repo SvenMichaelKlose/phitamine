@@ -340,7 +340,7 @@ actions) and to call our template:
 Compile and run the script – Voilà!
 
 
-### Ports – indepentend templates on a single page
+### Ports – independent templates on a single page
 
 Usually, the action handlers claim a 'port' for which it
 generates HTML as soon as a template requests that port via the
