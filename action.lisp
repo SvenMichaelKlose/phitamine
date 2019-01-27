@@ -26,8 +26,11 @@
 (defun components-path (x)
   (apply #'+ (pad (symbols-components x) "/")))
 
+(fn url-assignments-tail (x)
+  (& x (+ "?" (apply #'+ (@ [+ _. "=" ._] x)))))
+
 (defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
-  (= components (? (t? components)
+  (= components (? (eq t components)
                    (copy-tree *components*)
                    (ensure-alist components)))
   (awhen remove
@@ -35,14 +38,14 @@
     (= components (remove-if [member _. remove] components)))
   (adolist ((ensure-alist update))
     (aadjoin! !. .! components :test #'eq :to-end? t))
-  (append! components (ensure-alist add))
-  (& (t? params)
+  (nconc components (ensure-alist add))
+  (& (eq t params)
      (= params (request-data)))
-  (+ *base-url* "/" (components-path components) (url-assignments-tail (pairlist (carlist params)
+  (+ *base-url* "/" (components-path components) "/" (url-assignments-tail (pairlist (carlist params)
                                                                                  (symbols-components (cdrlist params))))))
 
 (defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
-  (header (+ "Location: http://" (%%%href *_SERVER* "HTTP_HOST")
+  (header (+ "Location: http://" (href *_SERVER* "HTTP_HOST")
              (action-url components :remove remove :update update :add add)))
   (quit))
 

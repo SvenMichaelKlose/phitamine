@@ -30,13 +30,13 @@
 (var *form-file-fields* '(name tmp-name error size type))
 
 (fn form-file-fields (name field)
-  (%%%href (%%%href *_FILES* (downcase (symbol-name name)))
-           (? (eq 'tmp-name field)
-              "tmp_name"
-              (downcase (symbol-name field)))))
+  (href (href *_FILES* (downcase (symbol-name name)))
+        (? (eq 'tmp-name field)
+           "tmp_name"
+           (downcase (symbol-name field)))))
 
 (fn form-file-field (name index field)
-  (%%%href (form-file-fields name field) index))
+  (href (form-file-fields name field) index))
 
 (fn form-num-files (name)
   (length (form-file-fields name 'name)))
