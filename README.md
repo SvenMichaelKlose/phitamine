@@ -9,10 +9,10 @@ language tré.
 
 phitamine gives you:
 
-    - easy access to request, form and session data.
-    - templates that make XML from Lisp expressions.
-    - a simple MySQL interface.
-    - modular associations of URLs with functions.
+* easy access to request, form and session data.
+* templates that make XML from Lisp expressions.
+* a simple MySQL interface.
+* modular associations of URLs with functions.
 
 
 ## What you need to know and have
@@ -31,32 +31,38 @@ archive.  You should get a directory of the same name.  Then,
 make an own directory where you'll place your source codes and
 symlink the phitamine directory into it:
 
-    tar xvzf phitamine.tar.gz
-    mkdir myproject
-    cd myproject
-    ln -s ../phitamine .
-    ln -s ../tre/environment .
+```sh
+mkdir -p myproject/tre_modules
+cd myproject/tre_modules
+git clone https://github.com/SvenMichaelKlose/phitamine.git
+```
 
 In your project directory, first set up a makefile that will
 compile your code.  Call it 'make.lisp' and insert this:
 
-    (load "phitamine/make-project.lisp")
-    (make-phitamine-project "Dummy project name" '("toplevel.lisp"))
-    (quit)
+```lisp
+(load "tre_modules/phitamine/make-project.lisp")
+(make-phitamine-project "Dummy project name" '("toplevel.lisp"))
+(quit)
+```
 
 This makefile takes a file called 'toplevel.lisp', compiles it to
 PHP and saves it as 'compiled/index.php'.  Create 'toplevel.lisp'
 with this:
 
-    (phitamine)
-    (princ "This works, too.")
+```lisp
+(phitamine)
+(princ "This works, too.")
+```
 
 phitamine doesn't output anything, except on errors.  Please try
 to compile this two-liner just to see if the version of phitamine
 you got is working at all.  Again, in the shell:
 
-    tre make.lisp
-    php compiled/index.php
+```sh
+tre make.lisp
+php compiled/index.php
+```
 
 This makes the script we want and uses the command-line version
 of PHP to test run it.  You should just get the message 'This
@@ -77,11 +83,15 @@ converted to HTML by phitamine.
 In LML every list is a tag.  The first element must be a symbol
 for the tag name.  A simple
 
-    (hr)
+```lisp
+(hr)
+```
 
 will translate to
 
-    <hr/>
+```html
+<hr/>
+```
 
 HTML5 has some tags that may not be closed at all, like the HR
 element but I guarantee you that a modern browser won't fail you
@@ -90,33 +100,47 @@ on syntactically correct XML.
 If you want attributes, use keyword symbols followed by values.
 A keyword symbol must never stand alone.
 
-    (hr :class "dont_use_classes_too_often")
+```lisp
+(hr :class "dont_use_classes_too_often")
+```
 
 will give you
 
-    <hr class="dont_use_classes_too_often"/>
+```html
+<hr class="dont_use_classes_too_often"/>
+```
 
 But
 
-    (hr :class)
+```lisp
+(hr :class)
+```
 
 will just break with an error message.  Inside an alement you
 can pack more elements or just text nodes:
 
-    (p "Go " (a :href "/" "home"))
+```lisp
+(p "Go " (a :href "/" "home"))
+```
 
 will give you
 
-    <p>Go <a href="/">home</a>.</p>
+```html
+<p>Go <a href="/">home</a>.</p>
+```
 
 Should you need a tag with no contents but with an extra ending
 tag, like a TEXTAREA element, use an empty string for the content:
 
-    (textarea :name "message" "")
+```lisp
+(textarea :name "message" "")
+```
 
 will give you the desired
 
-    <textarea name="message"></textarea>
+```html
+<textarea name="message"></textarea>
+```
 
 The LML to XML converter doesn't translate characters to XML
 entities, so you can nest HTML generators.
@@ -129,16 +153,20 @@ site.  Make a directory called 'templates' where we'll put our
 LML files.  There, create a file named 'main.lisp' with the
 following content:
 
-    (html
-      (head "Our first page with phitamine")
-      (body
-        "Even this works."))
+```lisp
+(html
+  (head "Our first page with phitamine")
+  (body
+    "Even this works."))
+```
 
 To get that template out, change 'toplevel.lisp' to:
 
-    (define-template tpl-main :path "templates/main.lisp")
-    (phitamine)
-    (princ (tpl-main))
+```lisp
+(define-template tpl-main :path "templates/main.lisp")
+(phitamine)
+(princ (tpl-main))
+```
 
 The template TPL-MAIN will be available as a function that
 returns our HTML.  Compile the script again and test it on your
@@ -158,18 +186,24 @@ LML expressions are BACKQUOTEd automatically, so you must use
 QUASIQUOTE to insert values.  This is how 'templates/main.lisp'
 should look like:
 
-    (html
-      (head (title "Our first dynamic template"))
-      (body
-        "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
+```lisp
+(html
+  (head (title "Our first dynamic template"))
+  (body
+    "Parameter X has the value &quot;" ,(param 'X) "&quot;."))
+```
 
 Also change 'toplevel.lisp' to set the X parameter:
 
-    (princ (tpl-main `((X . 42))))
+```lisp
+(princ (tpl-main `((X . 42))))
+```
 
 Compile the script and run it in your browser.  You should get
 
-    Parameter X has the value "42".
+```
+Parameter X has the value "42".
+```
 
 
 ### Form data
@@ -178,13 +212,15 @@ Form and database records come as associative lists as well.  Our
 first, simple form will show that. Here's the code we put in
 'templates/main.lisp' to replace its old code:
 
-    (html
-      (head (title "Our first phitamine form"))
-      (body
-        (form :method "post" :action ""
-          (input    :name "email" :type "text" :value ,(form-value 'email))
-          (textarea :name "message" ,(form-value 'message))
-          (input    :type "submit" :value "Submit..."))))
+```lisp
+(html
+  (head (title "Our first phitamine form"))
+  (body
+    (form :method "post" :action ""
+      (input    :name "email" :type "text" :value ,(form-value 'email))
+      (textarea :name "message" ,(form-value 'message))
+      (input    :type "submit" :value "Submit..."))))
+```
 
 FORM-VALUE reads values from the posted form data.
 
@@ -206,17 +242,21 @@ an error message if a directory doesn't exist and to pass the URL
 to our script.  To do that, create a '.htaccess' file next to
 your generated 'index.php':
 
-    Options -indexes
-    RewriteEngine on
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule .? index.php$1 [L]
+```
+Options -indexes
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .? index.php$1 [L]
+```
 
 This assumes that the script is in the root directory of your
 web server.  If you placed the script in a subdirectory called
 'example', you must change the last line to
 
-    RewriteRule .? /example/index.php$1 [L]
+```
+RewriteRule .? /example/index.php$1 [L]
+```
 
 Now, every time someone tries to open a page in the example
 directory, like 'http://whateveryourdomain.is/example/bla',
@@ -237,20 +277,22 @@ it issues the good old mood–shifting ERROR 404 PAGE NOT FOUND.
 Let's extend our already working page with internationalization.
 We enable our visitors to select the language of our page.
 
-    (html
-      (head (title "Our first phitamine form"))
-      (body
-        (a :href (action-url :update '(lang en)) "English") " "
-        (a :href (action-url :update '(lang de)) "Deutsch") " "
-        (a :href (action-url :update '(lang is)) "Íslenska")
-        (h1 ,(lang en "Welcome!"
-                   de "Willkommen!"
-                   is "Sæl og blessuð!"
-                   fr "Bonjour!"))
-        (form :method "post" :action ""
-          (input :type "text" :name "email" :value ,(param 'email))
-          (textarea :name "message" ,(param 'message))
-          (input :type "submit" :value "Submit..."))))
+```lisp
+(html
+  (head (title "Our first phitamine form"))
+  (body
+    (a :href (action-url :update '(lang en)) "English") " "
+    (a :href (action-url :update '(lang de)) "Deutsch") " "
+    (a :href (action-url :update '(lang is)) "Íslenska")
+    (h1 ,(lang en "Welcome!"
+               de "Willkommen!"
+               is "Sæl og blessuð!"
+               fr "Bonjour!"))
+    (form :method "post" :action ""
+      (input :type "text" :name "email" :value ,(param 'email))
+      (textarea :name "message" ,(param 'message))
+      (input :type "submit" :value "Submit..."))))
+```
 
 Our new page now intends to support four languages which will
 switch our heading.  Function ACTION-URL takes the current URL
@@ -261,13 +303,17 @@ First, we tell phitamine that there's an action LANGUAGE and a
 handler of the same name.  We can set another function, but one
 should always keep things as easy as possible:
 
-    (define-action language)
+```lisp
+(define-action language)
+```
 
 Then we define the handler:
 
-    (defun language (x)
-      (= *current-language* (make-symbol (upcase .x.)))
-      2)
+```lisp
+(defun language (x)
+  (= *current-language* (make-symbol (upcase .x.)))
+  2)
+```
 
 When this handler is called, variable X points to the URL
 component that caused the action to be invoked.  If the visitor
@@ -286,8 +332,10 @@ available, the LANG macro in the template will fall back to the
 All left to do is to invoke phitamine (which will process the
 actions) and to call our template:
 
-    (phitamine)
-    (princ (tpl-main (form-data)))
+```lisp
+(phitamine)
+(princ (tpl-main (form-data)))
+```
 
 Compile and run the script – Voilà!
 
@@ -303,30 +351,36 @@ the overall design of your site.  Copy the file
 'templates/main.lisp' to 'templates/home.lisp' and edit
 'main.lisp' to look like this:
 
-    (html
-      (head "Our first phitamine form")
-      (body
-        (a :href (action-url :update '(lang en)) "English") " "
-        (a :href (action-url :update '(lang de)) "Deutsch") " "
-        (a :href (action-url :update '(lang is)) "Íslenska")
-        ,(port 'content)))
+```lisp
+(html
+  (head "Our first phitamine form")
+  (body
+    (a :href (action-url :update '(lang en)) "English") " "
+    (a :href (action-url :update '(lang de)) "Deutsch") " "
+    (a :href (action-url :update '(lang is)) "Íslenska")
+    ,(port 'content)))
+```
 
 This will be our template used for all pages our script
 generates, so all pages come with a language selection.  Then,
 tweak 'home.lisp' to
 
-    (h1 ,(lang en "Welcome!"
-               de "Willkommen!"
-               is "Sæl og blessuð!"
-               fr "Bonjour!"))
-    (form :method "post" :action ""
-      (input :type "text" :name "email" :value ,(param 'email))
-      (textarea :name "message" ,(param 'message))
-      (input :type "submit" :value "Submit..."))))
+```lisp
+(h1 ,(lang en "Welcome!"
+           de "Willkommen!"
+           is "Sæl og blessuð!"
+           fr "Bonjour!"))
+(form :method "post" :action ""
+  (input :type "text" :name "email" :value ,(param 'email))
+  (textarea :name "message" ,(param 'message))
+  (input :type "submit" :value "Submit..."))))
+```
 
 In 'toplevel.lisp' we have to define the new template:
 
-    (define-template tpl-home :path "templates/home.lisp")
+```lisp
+(define-template tpl-home :path "templates/home.lisp")
+```
 
 As you might've guessed we need to claim the CONTENT port.  But
 to do that, we first have to make an action that can claim it,
@@ -334,15 +388,19 @@ The global variable *DEFAULT-ACTION* has to be set, so phitamine
 knows what to call if the URL contains no action.  Put the
 following line on top of your 'toplevel.lisp' file:
 
-    (= *default-action* "/home")
+```lisp
+(= *default-action* "/home")
+```
 
 Then define the action and handler for HOME:
 
-    (define-action home)
+```lisp
+(define-action home)
 
-    (defun home (x)
-      (set-port (tpl-home))
-      1)
+(defun home (x)
+  (set-port (tpl-home))
+  1)
+```
 
 The macro SET-PORT tells phitamine to call the TPL-HOME template
 for its port.  And, because we haven't defined a port for the
@@ -350,25 +408,27 @@ HOME action yet, phitamine assumes that you want the CONTENT port.
 
 Your new 'toplevel.lisp' should now look like this:
 
-    (= *default-action* "/home")
+```lisp
+(= *default-action* "/home")
 
-    (define-template tpl-main :path "templates/main.lisp")
-    (define-template tpl-home :path "templates/home.lisp")
+(define-template tpl-main :path "templates/main.lisp")
+(define-template tpl-home :path "templates/home.lisp")
 
-    (define-action language)
+(define-action language)
 
-    (defun language (x)
-      (= *current-language* (make-symbol (upcase .x.)))
-      2)
+(defun language (x)
+  (= *current-language* (make-symbol (upcase .x.)))
+  2)
 
-    (define-action home)
+(define-action home)
 
-    (defun home (x)
-      (set-port (tpl-home (form-data)))
-      1)
+(defun home (x)
+  (set-port (tpl-home (form-data)))
+  1)
 
-    (phitamine)
-    (princ (tpl-main))
+(phitamine)
+(princ (tpl-main))
+```
 
 ### Port groups
 
@@ -380,17 +440,25 @@ don't want it in the CONTENT port.  Therefore, actions are packed
 into groups which can be associated with a port.  If you don't
 specify a group when defining an action, it is set to DEFAULT. So
 
-    (define-action login)
+```lisp
+(define-action login)
+```
 
 is in fact
 
-    (define-action login :group default)
+```lisp
+(define-action login :group default)
+```
 
 Let's say your user management module set up a couple of actions:
 
-    (define-action login :group login)
-    (define-action logout :group login)
+```lisp
+(define-action login :group login)
+(define-action logout :group login)
+```
 
 you can put their group LOGIN into port NAVIGATION with SET-GROUP-PORT:
 
-    (set-group-port 'login 'navigation)
+```lisp
+(set-group-port 'login 'navigation)
+```
