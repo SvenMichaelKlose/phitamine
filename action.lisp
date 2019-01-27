@@ -38,11 +38,11 @@
     (= components (remove-if [member _. remove] components)))
   (adolist ((ensure-alist update))
     (aadjoin! !. .! components :test #'eq :to-end? t))
-  (nconc components (ensure-alist add))
+  (= components (append components (ensure-alist add)))
   (& (eq t params)
      (= params (request-data)))
   (+ *base-url* "/" (components-path components) "/" (url-assignments-tail (pairlist (carlist params)
-                                                                                 (symbols-components (cdrlist params))))))
+                                                                                     (symbols-components (cdrlist params))))))
 
 (fn action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
   (header (+ "Location: http://" (href *_SERVER* "HTTP_HOST")
