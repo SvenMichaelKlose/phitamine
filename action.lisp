@@ -1,9 +1,9 @@
-(defvar *home-components* nil)
-(defvar *components* nil)
-(defvar *actions* nil)
-(defvar *action* nil)
+(var *home-components* nil)
+(var *components* nil)
+(var *actions* nil)
+(var *action* nil)
 
-(defun add-action (component &key (group 'default) (handler nil))
+(fn add-action (component &key (group 'default) (handler nil))
   (& (assoc component *actions*)
      (error "action ~A is already defined" component))
   (acons! component (. handler group) *actions*))
@@ -14,22 +14,22 @@
      (error "group is not a symbol"))
   `(add-action ',component :group ',group :handler ,(| handler `#',component)))
 
-(defun set-action-group (action-name group)
+(fn set-action-group (action-name group)
   (= (cddr (assoc action-name *actions*)) group))
 
-(defun symbols-components (x)
+(fn symbols-components (x)
   (@ [? (symbol? _)
         (downcase (symbol-name _))
         (string _)]
      (apply #'append (@ #'ensure-list x))))
 
-(defun components-path (x)
+(fn components-path (x)
   (apply #'+ (pad (symbols-components x) "/")))
 
 (fn url-assignments-tail (x)
   (& x (+ "?" (apply #'+ (@ [+ _. "=" ._] x)))))
 
-(defun action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
+(fn action-url (&optional (components t) &key (remove nil) (update nil) (add nil) (params nil))
   (= components (? (eq t components)
                    (copy-tree *components*)
                    (ensure-alist components)))
@@ -44,25 +44,25 @@
   (+ *base-url* "/" (components-path components) "/" (url-assignments-tail (pairlist (carlist params)
                                                                                  (symbols-components (cdrlist params))))))
 
-(defun action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
+(fn action-redirect (&optional (components t) &key (remove nil) (update nil) (add nil))
   (header (+ "Location: http://" (href *_SERVER* "HTTP_HOST")
              (action-url components :remove remove :update update :add add)))
   (quit))
 
-(defun component-action (x)
+(fn component-action (x)
   (assoc x *actions*))
 
-(defun call-url-action-keep (x n)
+(fn call-url-action-keep (x n)
   (+! *components* (list (subseq x 0 n)))
   (nthcdr n x))
 
-(defun call-url-action-replace (x)
+(fn call-url-action-replace (x)
   (with ((kept next) x)
     (!? kept
         (+! *components* (list (ensure-list kept))))
     next))
 
-(defun call-url-action (action x)
+(fn call-url-action (action x)
   (with-temporary *action* action
     (let n (funcall .action. x)
       (?
@@ -70,14 +70,14 @@
         (values? n) (call-url-action-replace n)
         n))))
 
-(defun call-url-actions-0 (x)
+(fn call-url-actions-0 (x)
   (when x
     (let c (make-upcase-symbol x.)
       (!? (component-action c)
           (call-url-actions-0 (call-url-action ! (. c .x)))
           (error "no action found for ~A" x)))));(tpl-error-404)))))
 
-(defun call-url-actions ()
+(fn call-url-actions ()
   (= *components* nil)
   (call-url-actions-0 (| (request-path-components)
                          *home-components*)))

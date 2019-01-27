@@ -1,8 +1,6 @@
-;;;;; phitamine – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
-
-(defvar *db-user*)
-(defvar *db-password*)
-(defvar *db-name*)
-(defvar *db-host*)
-(defvar *db-table-prefix*)
-(defvar *db* nil)
+(var *db-user*)
+(var *db-password*)
+(var *db-name*)
+(var *db-host*)
+(var *db-table-prefix*)
+(var *db* nil)

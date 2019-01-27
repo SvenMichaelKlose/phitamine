@@ -1,17 +1,15 @@
-; phitamine – Copyright (c) 2014–2015 Sven Michael Klose <pixel@hugbox.org>
-
-(defvar *user-request-handler* nil)
+(var *user-request-handler* nil)
 
 (defmacro with-standard-output-string (&rest body)
   `(with-string-stream s
      (with-temporary *standard-output* s
        ,@body)))
 
-(defun log-headers (headers)
+(fn log-headers (headers)
   (@ (i (hashkeys headers))
     (console.log (+ "Header: " i ": " (href headers i)))))
 
-(defun phitamine-request-handler (req res)
+(fn phitamine-request-handler (req res)
   (console.log (+ "HTTP request " req.http-version
                   " from " (req.socket.address).address
                   ": " req.url))
@@ -21,7 +19,7 @@
                (funcall *user-request-handler*)))
   (res.end))
 
-(defun phitamine (request-handler)
+(fn phitamine (request-handler)
   (| (function? request-handler)
      (error "REQUEST-HANDLER argument is not a function."))
   (= *user-request-handler* request-handler)

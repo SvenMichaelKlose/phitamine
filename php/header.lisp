@@ -1,8 +1,6 @@
-;;;;; Caroshi – Copyright (c) 2012,2014 Sven Michael Klose <pixel@copei.de>
-
 (dont-obfuscate gmdate time)
 
-(defun send-header (&key (mime-type nil) (charset nil) (mod-time nil) (max-age nil))
+(fn send-header (&key (mime-type nil) (charset nil) (mod-time nil) (max-age nil))
   (& max-age   (header (+ "Cache-Control: private, max-age=" max-age ", no-cache")))
   (& mod-time  (header (+ "Last-Modified: " (gmdate "D, d M Y H:i:s T" mod-time) " GMT")))
   (?

@@ -1,2 +1,2 @@
-(defun _server (x)
+(fn _server (x)
   (href *_server* x))

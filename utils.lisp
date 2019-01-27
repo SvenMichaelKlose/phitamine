@@ -1,12 +1,10 @@
-;;;;; phitamine – Copyright (c) 2012–2014 Sven Michael Klose <pixel@hugbox.org>
-
-(defun empty? (x)
+(fn empty? (x)
   (zero? (length x)))
 
-(defun make-upcase-symbol (x)
+(fn make-upcase-symbol (x)
   (make-symbol (upcase x)))
 
 (define-filter make-upcase-symbols #'make-upcase-symbol)
 
-(defun comma-separated-list (x)
+(fn comma-separated-list (x)
   (pad x ","))

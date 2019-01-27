@@ -1,8 +1,6 @@
-;;;;; Caroshi – Copyright (c) 2010–2014 Sven Michael Klose <pixel@copei.de>
-
-(defvar *current-language* 'en)
-(defvar *fallback-language* 'en)
-(defvar *available-languages* '(en))
+(var *current-language* 'en)
+(var *fallback-language* 'en)
+(var *available-languages* '(en))
 
 (defmacro lang (&rest args)
   (? (== 2 (length args))
@@ -18,6 +16,6 @@
 	  ,consequence
 	  ,fallback))
 
-(defun switch-language (to)
+(fn switch-language (to)
   (= *current-language* (| (find to *available-languages*)
                            *fallback-language*)))

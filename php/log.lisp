@@ -1,5 +1,3 @@
-;;;;; Caroshi – Copyright (c) 2012 Sven Michael Klose <pixel@copei.de>
-
-(defun log (x)
+(fn log (x)     ; TODO: Rename to LOG-MESSAGE.
   (error_log x)
   x)

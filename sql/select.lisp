@@ -1,13 +1,11 @@
-;;;;; Caroshi – Copyright (c) 2009–2014 Sven Michael Klose <pixel@copei.de>
-
-(defun sql-clause-where (alst)
+(fn sql-clause-where (alst)
   (!? alst
       (+ " WHERE "
          (? (string? !)
             !
             (alist-assignments ! :padding " AND ")))))
 
-(defun sql-clause-select (&key table (fields nil) (where nil) (limit nil) (offset nil) (order-by nil) (direction nil))
+(fn sql-clause-select (&key table (fields nil) (where nil) (limit nil) (offset nil) (order-by nil) (direction nil))
   (assert (not (== 1 (length (remove-if #'not (list limit offset)))))
           ":LIMIT and :OFFSET have to be used together.")
   (apply #'string-concat
