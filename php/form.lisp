@@ -6,7 +6,7 @@
 (fn form-data ()
   (| *form-data*
      (& (has-form?)
-        (alet (properties-alist *_POST*)
+        (alet (properties-alist (phparray-object *_POST*))
           (= *form-data* (pairlist (make-upcase-symbols (carlist !))
                                    (cdrlist !)))))))
 
