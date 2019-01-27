@@ -38,7 +38,10 @@
     (= components (remove-if [member _. remove] components)))
   (adolist ((ensure-alist update))
     (aadjoin! !. .! components :test #'eq :to-end? t))
-  (= components (append components (ensure-alist add)))
+  (when add
+    (!= (ensure-alist add)
+      (remove-if [eq !.  _.] components)
+      (= components (append components !))))
   (& (eq t params)
      (= params (request-data)))
   (+ *base-url* "/" (components-path components) "/" (url-assignments-tail (pairlist (carlist params)
