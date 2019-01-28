@@ -16,6 +16,7 @@
                "selection-info.lisp"
                "select.lisp"
                "update.lisp"))
+    "tre_modules/php-db-mysql/main.lisp"
     ,@(list+ "tre_modules/phitamine/"
              `("lang.lisp"
                ,@(& (eq target :php)
@@ -23,12 +24,11 @@
                            '("db-connect.lisp"
                              "header.lisp"
                              "form.lisp"
-                             "log.lisp"
+                             "log-message.lisp"
                              "request.lisp"
                              "phitamine.lisp"
                              "server.lisp"
                              "session.lisp"
-                             "sql.lisp"
                              "sql-date.lisp")))
                ,@(& (eq target :nodejs)
                     '("growroom/nodejs/cookie.lisp"
