@@ -8,6 +8,14 @@
   `("tre_modules/shared/uuid.lisp"
     ,@(& (eq target :php)
          '("tre_modules/php/request-path.lisp"))
+    ,@(list+ "tre_modules/sql-clause/"
+             `("utils-querystring.lisp"
+               "create-table.lisp"
+               "delete.lisp"
+               "insert.lisp"
+               "selection-info.lisp"
+               "select.lisp"
+               "update.lisp"))
     ,@(list+ "tre_modules/phitamine/"
              `("lang.lisp"
                ,@(& (eq target :php)
@@ -25,14 +33,7 @@
                ,@(& (eq target :nodejs)
                     '("growroom/nodejs/cookie.lisp"
                       "growroom/nodejs/server.lisp"))
-               ,@(list+ "sql/"
-                        `("utils-querystring.lisp"
-                          "create-table.lisp"
-                          "delete.lisp"
-                          "insert.lisp"
-                          "select.lisp"
-                          "update.lisp"))
-               "terpri.lisp"
+              "terpri.lisp"
                "utils.lisp"
                "request.lisp"
                "detect-language.lisp"

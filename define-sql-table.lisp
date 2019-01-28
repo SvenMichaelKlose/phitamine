@@ -5,12 +5,13 @@
        (fn ,($ 'find- name) (&optional (fields nil) &key (limit nil) (offset nil) (order-by nil) (direction nil))
          (let column-names (make-upcase-symbols (*db*.column-names (+ *db-table-prefix* ,table-name)))
            (@ [@ #'cons column-names _]
-              (*db*.exec (sql-clause-select :table      (+ *db-table-prefix* ,table-name)
-                                            :where      (ensure-alist fields)
-                                            :limit      limit
-                                            :offset     offset
-                                            :order-by   order-by
-                                            :direction  direction)))))
+              (*db*.exec (sql-clause-select
+                             (make-selection-info :table      (+ *db-table-prefix* ,table-name)
+                                                  :where      (ensure-alist fields)
+                                                  :limit      limit
+                                                  :offset     offset
+                                                  :order-by   order-by
+                                                  :direction  direction))))))
        (fn ,($ 'find- singular-name) (&optional (fields nil))
          (car (funcall #',($ 'find- name) fields)))
        (fn ,($ 'insert- singular-name) (fields)
@@ -27,20 +28,23 @@
          (*db*.exec (sql-clause-delete :table  (+ *db-table-prefix* ,table-name)
                                        :where  (ensure-alist fields))))
        (fn ,($ 'get- singular-name '-count) (&optional (fields nil))
-         (number (caar (*db*.exec (sql-clause-select :table   (+ *db-table-prefix* ,table-name)
-                                                     :fields  '("COUNT(1)")
-                                                     :where   (ensure-alist fields))))))
+         (number (caar (*db*.exec (sql-clause-select
+                                      (make-selection-info :table   (+ *db-table-prefix* ,table-name)
+                                                           :fields  '("COUNT(1)")
+                                                           :where   (ensure-alist fields)))))))
        (fn ,($ 'get-distinct- name) (field &key (where nil) (order-by nil) (direction nil))
-         (carlist (*db*.exec (sql-clause-select :table      (+ *db-table-prefix* ,table-name)
-                                                :fields     `(,,(+ "DISTINCT(" (symbol-name field) ")"))
-                                                :where      (ensure-alist where)
-                                                :order-by   order-by
-                                                :direction  direction))))
+         (carlist (*db*.exec (sql-clause-select
+                                 (make-selection-info :table      (+ *db-table-prefix* ,table-name)
+                                                      :fields     `(,,(+ "DISTINCT(" (symbol-name field) ")"))
+                                                      :where      (ensure-alist where)
+                                                      :order-by   order-by
+                                                      :direction  direction)))))
        (fn ,($ 'select- name) (&key (fields nil) (where nil) (limit nil) (offset nil) (order-by nil) (direction nil))
-         (*db*.exec (sql-clause-select :table      (+ *db-table-prefix* ,table-name)
-                                       :fields     fields
-                                       :where      (ensure-alist where)
-                                       :limit      limit
-                                       :offset     offset
-                                       :order-by   order-by
-                                       :direction  direction))))))
+         (*db*.exec (sql-clause-select
+                        (make-selection-inf :table      (+ *db-table-prefix* ,table-name)
+                                            :fields     fields
+                                            :where      (ensure-alist where)
+                                            :limit      limit
+                                            :offset     offset
+                                            :order-by   order-by
+                                            :direction  direction)))))))

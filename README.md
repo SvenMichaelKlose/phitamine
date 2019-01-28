@@ -35,6 +35,7 @@ symlink the phitamine directory into it:
 mkdir -p myproject/tre_modules
 cd myproject/tre_modules
 git clone https://github.com/SvenMichaelKlose/phitamine.git
+git clone https://github.com/SvenMichaelKlose/tre-sql-clause.git sql-clause
 ```
 
 In your project directory, first set up a makefile that will
