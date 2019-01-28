@@ -17,9 +17,9 @@
                "select.lisp"
                "update.lisp"))
     "tre_modules/php-db-mysql/main.lisp"
+    "tre_modules/l10n/lang.lisp"
     ,@(list+ "tre_modules/phitamine/"
-             `("lang.lisp"
-               ,@(& (eq target :php)
+             `(,@(& (eq target :php)
                     (list+ "php/"
                            '("db-connect.lisp"
                              "header.lisp"
