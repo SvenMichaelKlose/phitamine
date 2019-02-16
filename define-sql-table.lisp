@@ -13,7 +13,7 @@
                                     :direction  direction)
              (@ [@ #'cons column-names _]
                 (*db*.exec (sql-clause-select !))))))
-      (fn ,($ 'find- singular-name) (&optional (fields nil))
+       (fn ,($ 'find- singular-name) (&optional (fields nil))
          (car (funcall #',($ 'find- name) fields)))
        (fn ,($ 'insert- singular-name) (fields)
          (*db*.exec (sql-clause-insert :table   (+ *db-table-prefix* ,table-name)
