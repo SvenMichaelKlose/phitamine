@@ -23,6 +23,9 @@ your own Linux with Apache, PHP and MySQL installed to really
 get some fun out of life.  Last but not least you should be able
 to use the Unix shell.
 
+phitamine requires the tré modules "l10n", "php", "php-db-mysql",
+"shared" and "sql-clause".
+
 
 ## How to use phitamine
 
@@ -292,7 +295,7 @@ We enable our visitors to select the language of our page.
     (form :method "post" :action ""
       (input :type "text" :name "email" :value ,(param 'email))
       (textarea :name "message" ,(param 'message))
-      (input :type "submit" :value "Submit..."))))
+      (input :type "submit" :value "Submit…"))))
 ```
 
 Our new page now intends to support four languages which will
@@ -463,3 +466,13 @@ you can put their group LOGIN into port NAVIGATION with SET-GROUP-PORT:
 ```lisp
 (set-group-port 'login 'navigation)
 ```
+
+# Future improvements
+
+* Improve the glossary (rename things):
+  - 'action' -> 'route'
+  - 'component' -> 'directory'? Or 'path element'?
+* Let handlers return the rest of path elements instead of number
+  of elements that should be skipped.
+* Use strings as path element names instead of keywords.
+* Use LML/component module.
