@@ -51,8 +51,8 @@ compile your code.  Call it 'make.lisp' and insert this:
 ```
 
 This makefile takes a file called 'toplevel.lisp', compiles it to
-PHP and saves it as 'compiled/index.php'.  Create 'toplevel.lisp'
-with this:
+PHP and saves it in 'compiled/index.php'.  Make the required
+'toplevel.lisp' like so:
 
 ```lisp
 (phitamine)
@@ -61,7 +61,7 @@ with this:
 
 phitamine doesn't output anything, except on errors.  Please try
 to compile this two-liner just to see if the version of phitamine
-you got is working at all.  Again, in the shell:
+you've got is working at all.  Again, in the shell:
 
 ```sh
 tre make.lisp
@@ -159,7 +159,7 @@ following content:
 
 ```lisp
 (html
-  (head "Our first page with phitamine")
+  (head (title "Our first page with phitamine"))
   (body
     "Even this works."))
 ```
@@ -315,7 +315,7 @@ Then we define the handler:
 
 ```lisp
 (defun language (x)
-  (= *current-language* (make-symbol (upcase .x.)))
+  (= *current-language* (make-upcase-symbol .x.))
   2)
 ```
 
@@ -377,7 +377,7 @@ tweak 'home.lisp' to
 (form :method "post" :action ""
   (input :type "text" :name "email" :value ,(param 'email))
   (textarea :name "message" ,(param 'message))
-  (input :type "submit" :value "Submit..."))))
+  (input :type "submit" :value "Submit…")))
 ```
 
 In 'toplevel.lisp' we have to define the new template:
