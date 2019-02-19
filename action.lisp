@@ -1,12 +1,12 @@
 (var *home-components* nil)
 (var *components* nil)
-(var *actions* nil)
+(var *defined-actions* nil)
 (var *action* nil)
 
 (fn add-action (component &key (group 'default) (handler nil))
-  (& (assoc component *actions*)
+  (& (assoc component *defined-actions*)
      (error "action ~A is already defined" component))
-  (acons! component (. handler group) *actions*))
+  (acons! component (. handler group) *defined-actions*))
 
 (defmacro define-action (component &key (group default) (handler nil))
   (print-definition `(define-action ,component :handler ,handler :group ,group))
@@ -15,7 +15,7 @@
   `(add-action ',component :group ',group :handler ,(| handler `#',component)))
 
 (fn set-action-group (action-name group)
-  (= (cddr (assoc action-name *actions*)) group))
+  (= (cddr (assoc action-name *defined-actions*)) group))
 
 (fn symbols-components (x)
   (@ [? (symbol? _)
@@ -53,7 +53,7 @@
   (quit))
 
 (fn component-action (x)
-  (assoc x *actions*))
+  (assoc x *defined-actions*))
 
 (fn call-url-action-keep (x n)
   (+! *components* (list (subseq x 0 n)))
