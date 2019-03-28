@@ -6,7 +6,7 @@
 (fn form-data ()
   (| *form-data*
      (& (has-form?)
-        (alet (properties-alist (phparray-object *_POST*))
+        (!= (props-alist (phparray-object *_POST*))
           (= *form-data* (pairlist (make-upcase-symbols (carlist !))
                                    (cdrlist !)))))))
 
@@ -48,6 +48,6 @@
   (& (has-form-files?)
      (with-queue q
        (dotimes (i (form-num-files name) (queue-list q))
-         (awhen (form-file-uploaded? name i)
-           (enqueue q (@ [. _ (form-file-field name i _)]
-                         *form-file-fields*)))))))
+         (& (form-file-uploaded? name i)
+            (enqueue q (@ [. _ (form-file-field name i _)]
+                          *form-file-fields*)))))))
