@@ -1,5 +1,3 @@
-(dont-obfuscate gmdate time)
-
 (fn send-header (&key (mime-type nil) (charset nil) (mod-time nil) (max-age nil))
   (& max-age   (header (+ "Cache-Control: private, max-age=" max-age ", no-cache")))
   (& mod-time  (header (+ "Last-Modified: " (gmdate "D, d M Y H:i:s T" mod-time) " GMT")))
