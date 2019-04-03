@@ -85,7 +85,6 @@
                       '("config.lisp"))
                    files)
                 :transpiler  (make-phitamine-transpiler target transpiler)
-                :obfuscate?  nil
                 :emitter     [put-file (format nil "~A/~A" dest-path filename) _])
   (when (eq :php target)
     (with-output-file out (format nil "~A/htaccess.example" dest-path)
