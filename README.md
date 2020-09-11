@@ -2,6 +2,8 @@
 
 # An introduction to phitamine
 
+tré version < 0.18 is required.
+
 ## Overview
 
 phitamine helps you to make LAMP sites with the programming
