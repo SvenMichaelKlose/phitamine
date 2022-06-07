@@ -1,4 +1,4 @@
-(load "tre_modules/phitamine/compile-time-sql-info.lisp")
+(load "../phitamine/compile-time-sql-info.lisp")
 
 (fn phitamine-files (target)
   (| (in? target :php :nodejs)
@@ -18,7 +18,7 @@
                "update.lisp"))
     "tre_modules/php-db-mysql/main.lisp"
     "tre_modules/l10n/lang.lisp"
-    ,@(list+ "tre_modules/phitamine/"
+    ,@(list+ "../phitamine/"
              `(,@(& (eq target :php)
                     (list+ "php/"
                            '("db-connect.lisp"
