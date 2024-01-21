@@ -1,5 +1,5 @@
 (fn empty? (x)
-  (zero? (length x)))
+  (== 0 (length x)))
 
 (fn make-upcase-symbol (x)
   (make-symbol (upcase x)))
